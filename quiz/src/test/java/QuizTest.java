@@ -7,8 +7,11 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import util.DeleterEJB;
 
 import javax.ejb.EJB;
 import java.io.UnsupportedEncodingException;
@@ -27,12 +30,21 @@ public class QuizTest {
                 .addPackage("datalayer")
                 .addPackage("datalayer.essentials")
                 .addPackage("businesslayer")
+                .addClass(DeleterEJB.class)
                 .addPackages(true, "org.apache.commons.codec")
                 .addAsResource("META-INF/persistence.xml");
     }
 
     @EJB
     private QuizEJB quizEJB;
+
+    @EJB
+    private DeleterEJB deleterEJB;
+
+    @Before @After
+    public void clean(){
+        deleterEJB.deleteAllQuiz();
+    }
 
     @Test
     public void testCreateQuiz(){
@@ -60,5 +72,33 @@ public class QuizTest {
         quizEJB.createAnswerToQuestion(question2, "120kg", "110kg", "100kg", "90kg");
         assertEquals("120kg", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(1).getAnswer().getSolutionToAnswer());
 
+        assertEquals(1, quizEJB.getQuizList().size());
+    }
+
+    @Test
+    public void testOne(){
+        assertEquals(0, quizEJB.getQuizList().size());
+    }
+
+    @Test
+    public void testMakeWholeQuiz(){
+        String a = "120kg";
+        String b = "100kg";
+        String c = "110kg";
+        String d = "90kg";
+        QuizRoot quizRoot = quizEJB.createWholeQuiz("Thangs quiz", "Thangs hobby", "Bodybuilding", "PR's", "How much weight does Thang bench", a, b, c, d);
+
+        assertEquals("Thangs quiz", quizEJB.getQuizList().get(0).getName());
+        assertEquals("Thangs hobby", quizEJB.getQuizList().get(0).getCategori());
+        assertEquals("Bodybuilding", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getCategori());
+        assertEquals("PR's", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getCategori());
+        assertEquals("How much weight does Thang bench", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(0).getQuestion());
+
+        QuizSub quizSub = quizEJB.createQuizSub(quizRoot, "People");
+        QuizSubSub quizSubSub = quizEJB.createQuizSubSub(quizRoot, quizSub, "Norwegians");
+        Question question = quizEJB.createQuestion(quizSubSub, "Why are norwegian girls so fine?");
+        quizEJB.createAnswerToQuestion(question, "They are vikings", "They eat healthy", "They watch movies", "They workout");
+
+        assertEquals("They are vikings", quizEJB.getQuizList().get(0).getQuizSubs().get(1).getQuizSubSubList().get(0).getQuestionList().get(0).getAnswer().getSolutionToAnswer());
     }
 }

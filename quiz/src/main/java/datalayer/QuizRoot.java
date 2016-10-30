@@ -2,6 +2,7 @@ package datalayer;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 @Entity
 @NamedQueries(value = {
-        @NamedQuery(name = QuizRoot.FIND_ALL, query = "SELECT a FROM QuizRoot a")
+    @NamedQuery(name = QuizRoot.FIND_ALL, query = "SELECT a FROM QuizRoot a WHERE a.isRoot = TRUE")
 })
 public class QuizRoot implements Serializable{
 
@@ -21,6 +22,9 @@ public class QuizRoot implements Serializable{
 
     @NotBlank
     private String name;
+
+    @NotNull
+    private boolean isRoot;
 
     @NotBlank
     private String categori;
@@ -67,5 +71,13 @@ public class QuizRoot implements Serializable{
 
     public void setCategori(String categori) {
         this.categori = categori;
+    }
+
+    public boolean isRoot() {
+        return isRoot;
+    }
+
+    public void setRoot(boolean root) {
+        isRoot = root;
     }
 }

@@ -13,7 +13,7 @@ public class QuizSub extends QuizRoot implements Serializable{
     @ManyToOne
     private QuizRoot quizRoot;
 
-    @OneToMany(mappedBy = "quizSub", fetch = FetchType.LAZY, cascade = CascadeType.DETACH, orphanRemoval = true)
+    @OneToMany(mappedBy = "quizSub", fetch = FetchType.EAGER, cascade = CascadeType.DETACH, orphanRemoval = true)
     private List<QuizSubSub> quizSubSubList;
 
 

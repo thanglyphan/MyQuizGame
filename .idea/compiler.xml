@@ -32,6 +32,8 @@
       <module name="quiz" target="1.8" />
       <module name="report" target="1.8" />
       <module name="restApi" target="1.8" />
+      <module name="sdf" target="1.8" />
+      <module name="utils" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -31,9 +31,19 @@ public class QuizEJB implements Serializable{
             em.persist(o);
         }
     }
+    public QuizRoot createWholeQuiz(String nameOfQuiz, String rootCategori, String subCategori, String subSubCategori, String question, String... answers){
+        QuizRoot quizRoot = createQuiz(nameOfQuiz, rootCategori);
+        QuizSub quizSub = createQuizSub(quizRoot, subCategori);
+        QuizSubSub quizSubSub = createQuizSubSub(quizRoot, quizSub, subSubCategori);
+        Question q = createQuestion(quizSubSub, question);
+        createAnswerToQuestion(q, answers[0],answers[1],answers[2],answers[3]);
+
+        return quizRoot;
+    }
 
     public QuizRoot createQuiz(String nameOfQuiz, String categori){
         QuizRoot quizRoot = new QuizRoot();
+        quizRoot.setRoot(true);
         quizRoot.setName(nameOfQuiz);
         quizRoot.setCategori(categori);
         quizRoot.setQuizSubs(new ArrayList<>());
@@ -43,11 +53,11 @@ public class QuizEJB implements Serializable{
 
     public QuizSub createQuizSub(QuizRoot quizRoot, String categori){
         QuizSub quizSub = new QuizSub();
+        quizSub.setRoot(false);
         quizSub.setQuizRoot(quizRoot);
         quizSub.setCategori(categori);
         quizSub.setName(quizRoot.getName());
         quizSub.setQuizSubSubList(new ArrayList<>());
-
         addSubQuiz(quizRoot, quizSub);
         return quizSub;
     }
@@ -55,6 +65,7 @@ public class QuizEJB implements Serializable{
     public QuizSubSub createQuizSubSub(QuizRoot quizRoot, QuizSub quizSub, String categori){
         QuizSubSub quizSubSub = new QuizSubSub();
         quizSubSub.setName(quizRoot.getName());
+        quizSubSub.setRoot(false);
         quizSubSub.setCategori(categori);
         quizSubSub.setQuizRoot(quizRoot);
         quizSubSub.setQuizSub(quizSub);
