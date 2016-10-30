@@ -15,10 +15,6 @@ public class CountryTestIT {
     public static void initClass(){
         JBossUtil.waitForJBoss(10);
     }
-    @Test
-    public void testFail(){
-        fail();
-    }
 
     @Test
     public void testWithRawTcp() throws Exception {

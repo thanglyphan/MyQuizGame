@@ -36,7 +36,7 @@ public class ApplicationConfig extends Application {
         beanConfig.setSchemes(new String[]{"http"});
         beanConfig.setHost("localhost:8080");
         beanConfig.setBasePath("/myrest/api");
-        beanConfig.setResourcePackage("restApi");
+        beanConfig.setResourcePackage("api");
 
         //AWFUL NAME: this "set" is the one does actually init Swagger...
         beanConfig.setScan(true);
