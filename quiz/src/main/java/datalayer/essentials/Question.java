@@ -1,10 +1,9 @@
 package datalayer.essentials;
 
-import datalayer.QuizSubSub;
+import datalayer.quiz.Quiz;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * Created by thang on 25.10.2016.
@@ -19,7 +18,7 @@ public class Question {
     private String question;
 
     @ManyToOne
-    private QuizSubSub quizSubSub;
+    private Quiz quiz;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, orphanRemoval = true)
     private Answer answer;
@@ -49,13 +48,6 @@ public class Question {
         this.question = question;
     }
 
-    public QuizSubSub getQuizSubSub() {
-        return quizSubSub;
-    }
-
-    public void setQuizSubSub(QuizSubSub quizSubSub) {
-        this.quizSubSub = quizSubSub;
-    }
 
     public Answer getAnswer() {
         return answer;
@@ -63,5 +55,17 @@ public class Question {
 
     public void setAnswer(Answer answer) {
         this.answer = answer;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
+
+    public String toString(){
+        return question;
     }
 }

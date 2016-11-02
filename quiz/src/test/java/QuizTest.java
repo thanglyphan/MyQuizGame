@@ -1,7 +1,11 @@
+import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
-import datalayer.QuizRoot;
-import datalayer.QuizSub;
-import datalayer.QuizSubSub;
+import datalayer.essentials.Answer;
+import datalayer.quiz.Quiz;
+
+import datalayer.categories.Category;
+import datalayer.categories.CategorySub;
+import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Question;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -27,8 +31,9 @@ public class QuizTest {
     @Deployment
     public static JavaArchive createTestArchive() throws UnsupportedEncodingException {
         return ShrinkWrap.create(JavaArchive.class)
-                .addPackage("datalayer")
                 .addPackage("datalayer.essentials")
+                .addPackage("datalayer.categories")
+                .addPackage("datalayer.quiz")
                 .addPackage("businesslayer")
                 .addClass(DeleterEJB.class)
                 .addPackages(true, "org.apache.commons.codec")
@@ -39,66 +44,46 @@ public class QuizTest {
     private QuizEJB quizEJB;
 
     @EJB
+    private CategoryEJB categoryEJB;
+
+    @EJB
     private DeleterEJB deleterEJB;
 
     @Before @After
     public void clean(){
         deleterEJB.deleteAllQuiz();
+        deleterEJB.deleteAllCategories();
     }
 
     @Test
-    public void testCreateQuiz(){
-        QuizRoot quizRoot = quizEJB.createQuiz("My first quiz", "Science");
-        assertEquals("Science", quizEJB.getQuizList().get(0).getCategori());
+    public void testCreateCategory(){
+        Category category = categoryEJB.createCategory("Thangs hobby");
+        assertEquals("Thangs hobby", category.getCategoryName());
+        assertEquals(1, categoryEJB.getCategoryList().size());
 
-        QuizSub quizSub = quizEJB.createQuizSub(quizRoot, "Computer Science");
-        assertEquals("Computer Science", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getCategori());
+        CategorySub categorySub = categoryEJB.addSubToCategory(category, "Lol");
+        assertEquals("Lol", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubName());
 
-        QuizSubSub quizSubSub = quizEJB.createQuizSubSub(quizRoot, quizSub, "Network");
-        assertEquals("Network", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getCategori());
+        CategorySubSub categorySubSub = categoryEJB.addSubSubToCategorySub(category, categorySub, "Hei");
+        assertEquals("Hei", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getCategorySubSubName());
 
-        Question question = quizEJB.createQuestion(quizSubSub, "Who is beast?");
+        Quiz quiz = quizEJB.createQuiz(categorySubSub, "Thangs quiz");
+        assertEquals("Thangs quiz", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getQuizList().get(0).getQuizName());
 
-        assertEquals("Who is beast?", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(0).getQuestion());
+        Question question = quizEJB.createQuestion(quiz, "What does the fox say?");
+        assertEquals("What does the fox say?", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getQuizList().get(0).getQuestionList().get(0).getQuestion());
 
-        quizEJB.createAnswerToQuestion(question, "Thang", "Pupp", "Pikk", "Fitte");
-        assertEquals("Thang", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(0).getAnswer().getSolutionToAnswer());
+        quizEJB.createAnswerToQuestion(question, "JakJakJak", "WoffWoff", "MjauMjau", "KoKo");
+        assertEquals("JakJakJak", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getQuizList().get(0).getQuestionList().get(0).getAnswer().getSolutionToAnswer());
 
-        //Lets make another question to the "Network"-quiz.
-        Question question2 = quizEJB.createQuestion(quizSubSub, "How much does Thang bench?");
+        //Create new quiz under category "Hei"
+        Quiz quiz2 = quizEJB.createQuiz(categorySubSub, "Thangs quiz second");
+        assertEquals("Thangs quiz second", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getQuizList().get(1).getQuizName());
 
-        assertEquals("How much does Thang bench?", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(1).getQuestion());
+        Question question2 = quizEJB.createQuestion(quiz2, "What does the man say?");
+        assertEquals("What does the man say?", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getQuizList().get(1).getQuestionList().get(0).getQuestion());
 
-        quizEJB.createAnswerToQuestion(question2, "120kg", "110kg", "100kg", "90kg");
-        assertEquals("120kg", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(1).getAnswer().getSolutionToAnswer());
-
-        assertEquals(1, quizEJB.getQuizList().size());
-    }
-
-    @Test
-    public void testOne(){
-        assertEquals(0, quizEJB.getQuizList().size());
-    }
-
-    @Test
-    public void testMakeWholeQuiz(){
-        String a = "120kg";
-        String b = "100kg";
-        String c = "110kg";
-        String d = "90kg";
-        QuizRoot quizRoot = quizEJB.createWholeQuiz("Thangs quiz", "Thangs hobby", "Bodybuilding", "PR's", "How much weight does Thang bench", a, b, c, d);
-
-        assertEquals("Thangs quiz", quizEJB.getQuizList().get(0).getName());
-        assertEquals("Thangs hobby", quizEJB.getQuizList().get(0).getCategori());
-        assertEquals("Bodybuilding", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getCategori());
-        assertEquals("PR's", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getCategori());
-        assertEquals("How much weight does Thang bench", quizEJB.getQuizList().get(0).getQuizSubs().get(0).getQuizSubSubList().get(0).getQuestionList().get(0).getQuestion());
-
-        QuizSub quizSub = quizEJB.createQuizSub(quizRoot, "People");
-        QuizSubSub quizSubSub = quizEJB.createQuizSubSub(quizRoot, quizSub, "Norwegians");
-        Question question = quizEJB.createQuestion(quizSubSub, "Why are norwegian girls so fine?");
-        quizEJB.createAnswerToQuestion(question, "They are vikings", "They eat healthy", "They watch movies", "They workout");
-
-        assertEquals("They are vikings", quizEJB.getQuizList().get(0).getQuizSubs().get(1).getQuizSubSubList().get(0).getQuestionList().get(0).getAnswer().getSolutionToAnswer());
+        quizEJB.createAnswerToQuestion(question2, "JaktJaktJakt", "WoffWoff", "MjauMjau", "KoKo");
+        assertEquals("JaktJaktJakt", categoryEJB.getCategoryList().get(0).getCategorySubs().get(0).getCategorySubSubs().get(0).getQuizList().get(1).getQuestionList().get(0).getAnswer().getSolutionToAnswer());
     }
 }

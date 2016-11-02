@@ -1,6 +1,8 @@
 package util;
+import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
-import datalayer.QuizRoot;
+import datalayer.categories.Category;
+import datalayer.quiz.Quiz;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -19,16 +21,31 @@ public class DeleterEJB {
     @EJB
     private QuizEJB quizEJB;
 
+    @EJB
+    private CategoryEJB categoryEJB;
+
     public void deleteQuiz(Long quizId){
-        QuizRoot quiz = em.find(QuizRoot.class, quizId);
+        Quiz quiz = em.find(Quiz.class, quizId);
         em.remove(quiz);
     }
 
     public int deleteAllQuiz(){
         int i = 0;
-        for(QuizRoot a: quizEJB.getQuizList()){
+        for(Quiz a: quizEJB.getQuizList()){
             i++;
-            deleteQuiz(a.getQuizId());
+            deleteQuiz(a.getId());
+        }
+        return i;
+    }
+    public void deleteCategory(Long categoryId){
+        Category category = em.find(Category.class, categoryId);
+        em.remove(category);
+    }
+    public int deleteAllCategories(){
+        int i = 0;
+        for(Category a: categoryEJB.getCategoryList()){
+            i++;
+            deleteCategory(a.getId());
         }
         return i;
     }

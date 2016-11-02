@@ -5,7 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/MyQuizGame.iml" filepath="$PROJECT_DIR$/MyQuizGame.iml" />
       <module fileurl="file://$PROJECT_DIR$/quiz/quiz.iml" filepath="$PROJECT_DIR$/quiz/quiz.iml" />
       <module fileurl="file://$PROJECT_DIR$/report/report.iml" filepath="$PROJECT_DIR$/report/report.iml" />
-      <module fileurl="file://$PROJECT_DIR$/restApi/restApi.iml" filepath="$PROJECT_DIR$/restApi/restApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restapi/restapi.iml" filepath="$PROJECT_DIR$/restapi/restapi.iml" />
     </modules>
   </component>
 </project>

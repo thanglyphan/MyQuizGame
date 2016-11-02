@@ -2,7 +2,10 @@
  * Created by thang on 30.10.2016.
  */
 
-import api.CountryRest;
+import api.implementation.CategoryRest;
+import api.implementation.QuizRest;
+import api.implementation.SubCategoryRest;
+import api.implementation.SubSubCategoryRest;
 import io.swagger.jaxrs.config.BeanConfig;
 
 import javax.ws.rs.ApplicationPath;
@@ -21,16 +24,6 @@ public class ApplicationConfig extends Application {
 
 
     public ApplicationConfig() {
-
-    /*
-      We use SWAGGER to create automatically create documentation
-      for the REST service.
-      This documentation will be served as a swagger.json file by
-      the REST service itself.
-      The web page under "webapp" are copied&pasted from the "dist"
-      folder in
-      https://github.com/swagger-api/swagger-ui
-     */
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("0.0.1");
         beanConfig.setSchemes(new String[]{"http"});
@@ -45,14 +38,13 @@ public class ApplicationConfig extends Application {
       Here we define which classes provide REST APIs
      */
         HashSet<Class<?>> c = new HashSet<>();
-        c.add(CountryRest.class);
-
+        c.add(CategoryRest.class);
+        c.add(SubCategoryRest.class);
+        c.add(SubSubCategoryRest.class);
+        c.add(QuizRest.class);
         //add further configuration to activate SWAGGER
         c.add(io.swagger.jaxrs.listing.ApiListingResource.class);
         c.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
-
-        //needed to handle Java 8 dates
-        c.add(ObjectMapperContextResolver.class);
 
         classes = Collections.unmodifiableSet(c);
     }

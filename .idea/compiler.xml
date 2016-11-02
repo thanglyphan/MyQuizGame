@@ -24,6 +24,7 @@
         <processorPath useClasspath="true" />
         <module name="quiz" />
         <module name="report" />
+        <module name="restapi" />
         <module name="restApi" />
       </profile>
     </annotationProcessing>
@@ -32,6 +33,7 @@
       <module name="quiz" target="1.8" />
       <module name="report" target="1.8" />
       <module name="restApi" target="1.8" />
+      <module name="restapi" target="1.8" />
       <module name="sdf" target="1.8" />
       <module name="utils" target="1.8" />
     </bytecodeTargetLevel>

@@ -1,8 +1,7 @@
 package businesslayer;
 
-import datalayer.QuizRoot;
-import datalayer.QuizSub;
-import datalayer.QuizSubSub;
+import datalayer.quiz.Quiz;
+import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Answer;
 import datalayer.essentials.Question;
 
@@ -31,57 +30,25 @@ public class QuizEJB implements Serializable{
             em.persist(o);
         }
     }
-    public QuizRoot createWholeQuiz(String nameOfQuiz, String rootCategori, String subCategori, String subSubCategori, String question, String... answers){
-        QuizRoot quizRoot = createQuiz(nameOfQuiz, rootCategori);
-        QuizSub quizSub = createQuizSub(quizRoot, subCategori);
-        QuizSubSub quizSubSub = createQuizSubSub(quizRoot, quizSub, subSubCategori);
-        Question q = createQuestion(quizSubSub, question);
-        createAnswerToQuestion(q, answers[0],answers[1],answers[2],answers[3]);
+    public Quiz createQuiz(CategorySubSub categorySubSub, String quizName){
+        Quiz quiz = new Quiz();
+        quiz.setQuizName(quizName);
+        quiz.setCategorySubSub(categorySubSub);
+        quiz.setQuestionList(new ArrayList<>());
+        persistInATransaction(quiz);
+        categorySubSub.getQuizList().add(quiz);
 
-        return quizRoot;
+        return quiz;
     }
 
-    public QuizRoot createQuiz(String nameOfQuiz, String categori){
-        QuizRoot quizRoot = new QuizRoot();
-        quizRoot.setRoot(true);
-        quizRoot.setName(nameOfQuiz);
-        quizRoot.setCategori(categori);
-        quizRoot.setQuizSubs(new ArrayList<>());
-        persistInATransaction(quizRoot);
-        return quizRoot;
-    }
-
-    public QuizSub createQuizSub(QuizRoot quizRoot, String categori){
-        QuizSub quizSub = new QuizSub();
-        quizSub.setRoot(false);
-        quizSub.setQuizRoot(quizRoot);
-        quizSub.setCategori(categori);
-        quizSub.setName(quizRoot.getName());
-        quizSub.setQuizSubSubList(new ArrayList<>());
-        addSubQuiz(quizRoot, quizSub);
-        return quizSub;
-    }
-
-    public QuizSubSub createQuizSubSub(QuizRoot quizRoot, QuizSub quizSub, String categori){
-        QuizSubSub quizSubSub = new QuizSubSub();
-        quizSubSub.setName(quizRoot.getName());
-        quizSubSub.setRoot(false);
-        quizSubSub.setCategori(categori);
-        quizSubSub.setQuizRoot(quizRoot);
-        quizSubSub.setQuizSub(quizSub);
-        quizSubSub.setQuestionList(new ArrayList<>());
-
-        persistInATransaction(quizSubSub);
-        return quizSubSub;
-    }
-
-    public Question createQuestion(QuizSubSub quizSubSub, String q){
+    public Question createQuestion(Quiz quiz, String q){
         Question question = new Question();
         question.setQuestion(q);
-        question.setQuizSubSub(quizSubSub);
+        question.setQuiz(quiz);
         persistInATransaction(question);
 
-        quizSubSub.getQuestionList().add(question);
+        quiz.getQuestionList().add(question);
+        em.merge(quiz);
         return question;
     }
 
@@ -99,14 +66,6 @@ public class QuizEJB implements Serializable{
         em.merge(question);
     }
 
-    private void addSubQuiz(QuizRoot quizRoot, QuizSub quizSub){
-        persistInATransaction(quizSub);
-
-        quizRoot.getQuizSubs().add(quizSub);
-        em.merge(quizRoot);
-    }
-
-
 
 
 
@@ -116,10 +75,10 @@ public class QuizEJB implements Serializable{
 
     /*----------------------------------------------GETTER AND SETTER----------------------------------------------*/
 
-    public QuizRoot getQuizRoot(Long id){
-        return em.find(QuizRoot.class, id);
+    public List<Quiz> getQuizList(){
+        return em.createNamedQuery(Quiz.FIND_ALL).getResultList();
     }
-    public List<QuizRoot> getQuizList(){
-        return em.createNamedQuery(QuizRoot.FIND_ALL).getResultList();
+    public Quiz get(Long id){
+        return em.find(Quiz.class, id);
     }
 }
