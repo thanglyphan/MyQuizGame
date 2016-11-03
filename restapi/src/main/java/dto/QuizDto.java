@@ -11,7 +11,7 @@ import java.util.List;
 
 @ApiModel("A Quiz")
 public class QuizDto {
-    @ApiModelProperty("The id of the category")
+    @ApiModelProperty(value = "The id of the category", hidden = true)
     public String id;
     @ApiModelProperty("The root category id")
     public String rootId;
@@ -19,11 +19,11 @@ public class QuizDto {
     public String subCategoryId;
     @ApiModelProperty("The sub sub category id")
     public String subSubCategoryId;
-    @ApiModelProperty("The root category")
+    @ApiModelProperty(value = "The root category", hidden = true)
     public String rootCategory;
-    @ApiModelProperty("The sub category")
+    @ApiModelProperty(value = "The sub category", hidden = true)
     public String subCategory;
-    @ApiModelProperty("The sub sub category")
+    @ApiModelProperty(value = "The sub sub category", hidden = true)
     public String subsubCategory;
     @ApiModelProperty("The quiz name")
     public String quizName;
@@ -53,19 +53,3 @@ public class QuizDto {
         this.question = question;
     }
 }
-
-/*
-
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @ManyToOne
-    private CategorySubSub categorySubSub;
-
-    @NotBlank
-    private String quizName;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, orphanRemoval = true)
-    private List<Question> questionList;
- */

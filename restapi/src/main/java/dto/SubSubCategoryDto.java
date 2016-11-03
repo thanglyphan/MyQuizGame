@@ -9,15 +9,15 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel("A Sub Sub Category")
 public class SubSubCategoryDto {
-    @ApiModelProperty("The id of the sub sub category")
+    @ApiModelProperty(value = "The id of the sub sub category", hidden = true)
     public String id;
     @ApiModelProperty("The root category id")
     public String rootId;
     @ApiModelProperty("The sub category id")
     public String subCategoriId;
-    @ApiModelProperty("The root category")
+    @ApiModelProperty(value = "The root category", hidden = true)
     public String rootCategory;
-    @ApiModelProperty("The sub category")
+    @ApiModelProperty(value = "The sub category", hidden = true)
     public String subCategory;
     @ApiModelProperty("The sub sub category")
     public String subSubCategory;
