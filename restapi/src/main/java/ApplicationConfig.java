@@ -2,10 +2,7 @@
  * Created by thang on 30.10.2016.
  */
 
-import api.implementation.CategoryRest;
-import api.implementation.QuizRest;
-import api.implementation.SubCategoryRest;
-import api.implementation.SubSubCategoryRest;
+import api.implementation.*;
 import io.swagger.jaxrs.config.BeanConfig;
 
 import javax.ws.rs.ApplicationPath;
@@ -42,6 +39,7 @@ public class ApplicationConfig extends Application {
         c.add(SubCategoryRest.class);
         c.add(SubSubCategoryRest.class);
         c.add(QuizRest.class);
+        c.add(QuestionAnswersRest.class);
         //add further configuration to activate SWAGGER
         c.add(io.swagger.jaxrs.listing.ApiListingResource.class);
         c.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);

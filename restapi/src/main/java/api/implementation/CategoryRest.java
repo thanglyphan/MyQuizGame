@@ -6,10 +6,17 @@ package api.implementation;
 
 import api.rest.CategoryRestApi;
 import businesslayer.CategoryEJB;
+import businesslayer.QuizEJB;
 import com.google.common.base.Throwables;
 import datalayer.categories.Category;
+import datalayer.categories.CategorySub;
+import datalayer.categories.CategorySubSub;
+import datalayer.essentials.Question;
+import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
+import dto.SubCategoryDto;
+import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
 
 
@@ -20,6 +27,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -33,10 +41,20 @@ public class CategoryRest implements CategoryRestApi {
     @EJB
     protected CategoryEJB categoryEJB;
 
-
+    @EJB
+    protected QuizEJB quizEJB;
 
     @Override
     public List<CategoryDto> get() {
+
+        Category a = categoryEJB.createCategory("Thang");
+        CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
+        CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
+        Quiz d = quizEJB.createQuiz(c, "The fitness quiz");
+
+        Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
+        quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
+
         return Converter.transform(categoryEJB.getCategoryList());
     }
 
@@ -61,6 +79,39 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
         categoryEJB.deleteCategory(id);
+    }
+
+    @Override
+    public List<CategoryDto> getCategoriesWithQuiz() {
+        List<Category> list = new ArrayList<>();
+        for(Quiz a: quizEJB.getQuizList()){
+            list.add(a.getCategorySubSub().getCategory());
+        }
+        return Converter.transform(list);
+    }
+
+    @Override
+    public List<SubSubCategoryDto> getSubSubCategoriesWithQuiz() {
+        List<CategorySubSub> list = new ArrayList<>();
+        for(Quiz a: quizEJB.getQuizList()){
+            list.add(a.getCategorySubSub());
+        }
+        return Converter.transformSubSub(list);
+    }
+
+    @Override
+    public List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
+        List<CategorySub> list = new ArrayList<>();
+        try{
+            Category found = categoryEJB.get(id);
+            for(CategorySub a: found.getCategorySubs()){
+                list.add(a);
+            }
+        }catch (Exception e){
+            throw wrapException(e);
+        }
+
+        return Converter.transformSub(list);
     }
 
     //----------------------------------------------------------

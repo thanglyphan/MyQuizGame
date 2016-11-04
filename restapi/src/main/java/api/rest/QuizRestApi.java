@@ -6,10 +6,7 @@ package api.rest;
 
 import dto.CategoryDto;
 import dto.QuizDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -32,4 +29,14 @@ public interface QuizRestApi {
     @ApiResponse(code = 200, message = "The id of newly created category")
     Long createQuiz(@ApiParam("Create a quiz") QuizDto dto);
 
+
+    @ApiOperation("Get a single quiz specified by id")
+    @GET
+    @Path("/id/{id}")
+    QuizDto getById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    @ApiOperation("Delete a quiz with the given id")
+    @DELETE
+    @Path("/id/{id}")
+    void delete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 }

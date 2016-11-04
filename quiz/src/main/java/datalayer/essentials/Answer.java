@@ -12,10 +12,6 @@ import javax.persistence.OneToOne;
  */
 @Entity
 public class Answer extends Solution {
-
-    @OneToOne
-    private Question question;
-
     @NotBlank
     private String choiceOne;
 
@@ -77,7 +73,7 @@ public class Answer extends Solution {
     public void setChoiceFour(String choiceFour) {
         this.choiceFour = choiceFour;
     }
-
+/*
     public Question getQuestion() {
         return question;
     }
@@ -85,4 +81,5 @@ public class Answer extends Solution {
     public void setQuestion(Question question) {
         this.question = question;
     }
+    */
 }

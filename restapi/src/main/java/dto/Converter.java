@@ -4,10 +4,10 @@ package dto;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
+import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +63,20 @@ public class Converter {
         dto.subCategory = entity.getCategorySubSub().getCategorySub().getCategorySubName();
         dto.subsubCategory = entity.getCategorySubSub().getCategorySubSubName();
         dto.quizName = entity.getQuizName();
-        dto.quizQuestions = entity.getQuestionList();
+
+        Map<String, List<String>> listHashMap = new HashMap<>();
+        List<String> holderAnswer;
+
+        for(Question a: entity.getQuestionList()){
+            holderAnswer = new ArrayList<>();
+            holderAnswer.add(a.getAnswer().getChoiceOne());
+            holderAnswer.add(a.getAnswer().getChoiceTwo());
+            holderAnswer.add(a.getAnswer().getChoiceThree());
+            holderAnswer.add(a.getAnswer().getChoiceFour());
+            holderAnswer.add("Solution: " + a.getAnswer().getSolutionToAnswer());
+            listHashMap.put(a.getQuestion(), holderAnswer);
+        }
+        dto.questionsAndAnswersList = listHashMap;
         return dto;
     }
 

@@ -8,8 +8,11 @@ import api.rest.SubCategoryRestApi;
 import businesslayer.CategoryEJB;
 import com.google.common.base.Throwables;
 import datalayer.categories.Category;
+import datalayer.categories.CategorySub;
+import datalayer.categories.CategorySubSub;
 import dto.Converter;
 import dto.SubCategoryDto;
+import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
 
 import javax.ejb.EJB;
@@ -18,6 +21,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -59,6 +63,30 @@ public class SubCategoryRest implements SubCategoryRestApi {
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
             categoryEJB.deleteCategory(id);
+    }
+
+    @Override
+    public List<SubCategoryDto> getSubcategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
+        List<CategorySub> categorySubs;
+        try{
+            Category found = categoryEJB.get(id);
+            categorySubs = found.getCategorySubs();
+        }catch (Exception e){
+            throw wrapException(e);
+        }
+        return Converter.transformSub(categorySubs);
+    }
+
+    @Override
+    public List<SubSubCategoryDto> getSubSubcategoriesById(@ApiParam(ID_PARAM) Long id) {
+        List<CategorySubSub> categorySubSubs;
+        try{
+            CategorySub found = categoryEJB.getSub(id);
+            categorySubSubs = found.getCategorySubSubs();
+        }catch (Exception e){
+            throw wrapException(e);
+        }
+        return Converter.transformSubSub(categorySubSubs);
     }
 
     //----------------------------------------------------------

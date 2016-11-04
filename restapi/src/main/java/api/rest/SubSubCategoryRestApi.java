@@ -42,4 +42,9 @@ public interface SubSubCategoryRestApi {
     @DELETE
     @Path("/id/{id}")
     void delete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    @ApiOperation("GET all subsubcategories with the given subcategory parent specified by id")
+    @GET
+    @Path("/parent/{id}")
+    List<SubSubCategoryDto> getSubSubCategoriesBySubCategoryId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 }

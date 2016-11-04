@@ -4,6 +4,7 @@ package api.implementation;
  * Created by thang on 31.10.2016.
  */
 
+import api.rest.QuestionAnswersRestApi;
 import api.rest.QuizRestApi;
 import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
@@ -12,7 +13,6 @@ import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
-import dto.CategoryDto;
 import dto.QuestionDto;
 import dto.QuizDto;
 import io.swagger.annotations.ApiParam;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) //avoid creating new transactions
-public class QuizRest implements QuizRestApi {
+public class QuestionAnswersRest implements QuestionAnswersRestApi {
     private CategorySubSub categorySubSub;
     @EJB
     protected CategoryEJB categoryEJB;
@@ -40,38 +40,20 @@ public class QuizRest implements QuizRestApi {
     protected QuizEJB quizEJB;
 
     @Override
-    public List<QuizDto> get() {
-        return Converter.transformQuiz(quizEJB.getQuizList());
-    }
-
-    @Override
-    public Long createQuiz(@ApiParam("Create a quiz") QuizDto dto) {
+    public Long createQuestion(@ApiParam("Create a question") QuestionDto dto) {
         Long id;
         try{
-            this.categorySubSub = categoryEJB.getSubSub(Long.parseLong(dto.subSubCategoryId));
-            if(!categorySubSub.isSubSub() || categorySubSub == null){
+            Quiz found = quizEJB.get(Long.parseLong(dto.quizId));
+            if(found == null){
                 throw new WebApplicationException("Invalid parameters: ", 500);
             }
-            id = quizEJB.createQuiz(categorySubSub, dto.quizName).getId();
-            /*
-            Question question = quizEJB.createQuestion(quizEJB.get(id), dto.question);
-            quizEJB.createAnswerToQuestion(question, dto.choiceOne, dto.choiceTwo, dto.choiceThree, dto.choiceFour);
-            */
+            Question newQ = quizEJB.createQuestion(found, dto.question);
+            id = newQ.getQuestionsId();
+            quizEJB.createAnswerToQuestion(newQ, dto.choiceOne, dto.choiceTwo, dto.choiceThree, dto.choiceFour);
         }catch (Exception e){
             throw wrapException(e);
         }
-
         return id;
-    }
-
-    @Override
-    public QuizDto getById(@ApiParam(ID_PARAM) Long id) {
-        return Converter.transform(quizEJB.get(id));
-    }
-
-    @Override
-    public void delete(@ApiParam(ID_PARAM) Long id) {
-        quizEJB.deleteQuiz(id);
     }
 
     //----------------------------------------------------------

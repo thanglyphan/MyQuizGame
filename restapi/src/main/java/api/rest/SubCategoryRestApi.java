@@ -6,6 +6,7 @@ package api.rest;
 
 import dto.CategoryDto;
 import dto.SubCategoryDto;
+import dto.SubSubCategoryDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -42,4 +43,15 @@ public interface SubCategoryRestApi {
     @DELETE
     @Path("/id/{id}")
     void delete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    @ApiOperation("GET all subcategories with the given parent specified by id")
+    @GET
+    @Path("/parent/{id}")
+    List<SubCategoryDto> getSubcategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    @ApiOperation("GET all subsubcategories of the subcategory specified by id")
+    @GET
+    @Path("/id/{id}/subsubcategories")
+    List<SubSubCategoryDto> getSubSubcategoriesById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
 }

@@ -44,7 +44,7 @@ public class QuizEJB implements Serializable{
     public Question createQuestion(Quiz quiz, String q){
         Question question = new Question();
         question.setQuestion(q);
-        question.setQuiz(quiz);
+        //question.setQuiz(quiz);
         persistInATransaction(question);
 
         quiz.getQuestionList().add(question);
@@ -58,7 +58,7 @@ public class QuizEJB implements Serializable{
         answer.setChoiceTwo(choiseTwo);
         answer.setChoiceThree(choiceThree);
         answer.setChoiceFour(choiceFour);
-        answer.setQuestion(question);
+        //answer.setQuestion(question);
         answer.setSolutionToAnswer(choiceOne);
         persistInATransaction(answer);
 
@@ -81,4 +81,6 @@ public class QuizEJB implements Serializable{
     public Quiz get(Long id){
         return em.find(Quiz.class, id);
     }
+    public Question getQuestion(Long id) { return em.find(Question.class, id); }
+    public void deleteQuiz(Long id){ em.remove(em.find(Quiz.class, id));}
 }

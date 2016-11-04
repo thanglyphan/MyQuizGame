@@ -9,6 +9,7 @@ import businesslayer.CategoryEJB;
 import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
+import datalayer.categories.CategorySubSub;
 import dto.Converter;
 import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +20,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -60,6 +62,18 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
             categoryEJB.deleteCategory(id);
+    }
+
+    @Override
+    public List<SubSubCategoryDto> getSubSubCategoriesBySubCategoryId(@ApiParam(ID_PARAM) Long id) {
+        List<CategorySubSub> categorySubSubs = new ArrayList<>();
+        try{
+            CategorySub found = categoryEJB.getSub(id);
+            categorySubSubs.addAll(found.getCategorySubSubs());
+        }catch (Exception e){
+            throw wrapException(e);
+        }
+        return Converter.transformSubSub(categorySubSubs);
     }
 
     //----------------------------------------------------------

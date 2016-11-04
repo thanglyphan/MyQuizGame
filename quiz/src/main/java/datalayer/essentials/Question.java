@@ -16,9 +16,10 @@ public class Question {
 
     @NotBlank
     private String question;
-
+/*
     @ManyToOne
     private Quiz quiz;
+    */
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, orphanRemoval = true)
     private Answer answer;
@@ -56,7 +57,7 @@ public class Question {
     public void setAnswer(Answer answer) {
         this.answer = answer;
     }
-
+/*
     public Quiz getQuiz() {
         return quiz;
     }
@@ -64,7 +65,7 @@ public class Question {
     public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
     }
-
+*/
     public String toString(){
         return question;
     }

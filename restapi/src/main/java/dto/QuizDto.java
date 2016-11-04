@@ -1,17 +1,21 @@
 package dto;
 
 import businesslayer.QuizEJB;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import datalayer.essentials.Question;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.ejb.EJB;
 import java.util.List;
+import java.util.Map;
 
 
 @ApiModel("A Quiz")
 public class QuizDto {
-    @ApiModelProperty(value = "The id of the category", hidden = true)
+    @ApiModelProperty(value = "The id of the QUIZ", hidden = true)
     public String id;
     @ApiModelProperty("The root category id")
     public String rootId;
@@ -27,29 +31,28 @@ public class QuizDto {
     public String subsubCategory;
     @ApiModelProperty("The quiz name")
     public String quizName;
-    @ApiModelProperty("The question")
+    /*
+    @ApiModelProperty(value = "The question", notes = "POST/PUT only")
     public String question;
-    @ApiModelProperty("Choice one")
+    @ApiModelProperty(value = "Choice one", notes = "POST/PUT only")
     public String choiceOne;
-    @ApiModelProperty("Choice two")
+    @ApiModelProperty(value = "Choice two", notes = "POST/PUT only")
     public String choiceTwo;
-    @ApiModelProperty("Choice three")
+    @ApiModelProperty(value = "Choice three", notes = "POST/PUT only")
     public String choiceThree;
-    @ApiModelProperty("Choice four")
-    public String choiceFour;
-    @ApiModelProperty("The solution")
-    public String solution;
-    @ApiModelProperty("List of questions")
-    public List<Question> quizQuestions;
-
+    @ApiModelProperty(value = "Choice four", notes = "POST/PUT only")
+    public String choiceFour;'
+    */
+    /*
+    @ApiModelProperty(value = "Question list", hidden = true)
+    public List<String> questionList;
+    @ApiModelProperty(value = "Answers to the question", hidden = true)
+    public List<String> answerList;
+    */
+    @ApiModelProperty(value = "Q and A", hidden = true)
+    public Map<String, List<String>> questionsAndAnswersList;
 
 
     public QuizDto(){}
 
-    public QuizDto(String quizId, String subSubCategoryId, String quizName, String question){
-        this.id = quizId;
-        this.subSubCategoryId = subSubCategoryId;
-        this.quizName = quizName;
-        this.question = question;
-    }
 }
