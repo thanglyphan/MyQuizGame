@@ -56,10 +56,8 @@ public class Converter {
 
         QuizDto dto = new QuizDto();
         dto.id = String.valueOf(entity.getId());
-        dto.rootId = String.valueOf(entity.getCategorySubSub().getCategory().getId());
-        dto.subCategoryId = String.valueOf(entity.getCategorySubSub().getCategorySub().getId());
         dto.subSubCategoryId = String.valueOf(entity.getCategorySubSub().getId());
-        dto.rootCategory = entity.getCategorySubSub().getCategoryName();
+        dto.rootCategory = entity.getCategorySubSub().getCategory().getCategoryName();
         dto.subCategory = entity.getCategorySubSub().getCategorySub().getCategorySubName();
         dto.subsubCategory = entity.getCategorySubSub().getCategorySubSubName();
         dto.quizName = entity.getQuizName();

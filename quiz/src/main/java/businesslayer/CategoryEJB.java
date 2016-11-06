@@ -3,6 +3,7 @@ package businesslayer;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
+import datalayer.quiz.Quiz;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -70,6 +71,95 @@ public class CategoryEJB {
         return categorySubSub;
     }
 
+    public boolean update(@NotNull Long id, @NotNull String rootCategory){
+        Category category = em.find(Category.class, id);
+        if(category == null){
+            return false;
+        }
+        List<CategorySub> categorySubList = category.getCategorySubs();
+        category.setCategoryName(rootCategory);
+        category.setCategorySubs(categorySubList);
+        category.setRoot(true);
+        category.setSub(false);
+        category.setSubSub(false);
+        return true;
+    }
+
+    public boolean updateSub(@NotNull Long id, @NotNull Long rootId, @NotNull String subCategory){
+        CategorySub categorySub = getSub(id);
+        if(categorySub == null || get(rootId) == null){
+            return false;
+        }
+        List<CategorySubSub> categorySubSubList = categorySub.getCategorySubSubs();
+        Category category = get(rootId);
+        category.getCategorySubs().remove(categorySub);
+
+        categorySub.setCategoryName(category.getCategoryName());
+        categorySub.setCategory(category);
+        categorySub.setCategorySubName(subCategory);
+        categorySub.setCategorySubSubs(categorySubSubList);
+        categorySub.setRoot(false);
+        categorySub.setSub(true);
+        categorySub.setSubSub(false);
+
+        category.getCategorySubs().add(categorySub);
+
+        return true;
+    }
+
+    public boolean updateSubSub(@NotNull Long id, @NotNull Long rootId, @NotNull Long subId, @NotNull String subsubCategory){
+        CategorySubSub categorySubSub = em.find(CategorySubSub.class, id);
+        if(categorySubSub == null || get(rootId) == null || getSub(subId) == null){
+            return false;
+        }
+        List<Quiz> quizList = categorySubSub.getQuizList();
+        getSub(subId).getCategorySubSubs().remove(categorySubSub);
+
+        categorySubSub.setCategoryName(get(rootId).getCategoryName());
+        categorySubSub.setCategory(get(rootId));
+        categorySubSub.setCategorySubSubName(subsubCategory);
+        categorySubSub.setCategorySub(getSub(subId));
+        categorySubSub.setRoot(false);
+        categorySubSub.setSub(false);
+        categorySubSub.setSubSub(true);
+        categorySubSub.setQuizList(quizList);
+        categorySubSub.setCategorySubName(getSub(subId).getCategorySubName());
+
+        getSub(subId).getCategorySubSubs().add(categorySubSub);
+
+        return true;
+    }
+
+    public boolean updatePatch(@NotNull Long id, @NotNull String rootCategory){
+        Category category = em.find(Category.class, id);
+
+        if(category == null){
+            return false;
+        }
+        category.setCategoryName(rootCategory);
+        return true;
+    }
+
+    public boolean updatePatchSub(@NotNull Long id, @NotNull String subCat){
+        CategorySub categorySub = em.find(CategorySub.class, id);
+
+        if(categorySub == null){
+            return false;
+        }
+        categorySub.setCategorySubName(subCat);
+        return true;
+    }
+
+    public boolean updatePatchSubSub(@NotNull Long id, @NotNull String subSubCat){
+        CategorySubSub categorySubSub = em.find(CategorySubSub.class, id);
+
+        if(categorySubSub == null){
+            return false;
+        }
+        categorySubSub.setCategorySubSubName(subSubCat);
+        return true;
+    }
+
 
     public List<Category> getCategoryList(){
         return em.createNamedQuery(Category.FIND_ALL).getResultList();
@@ -92,6 +182,9 @@ public class CategoryEJB {
     public void deleteCategory(@NotNull Long categoryId){
         em.remove(em.find(Category.class, categoryId));
     }
+    public boolean isPresent(Long id){return em.contains(em.find(Category.class, id));}
+    public boolean isPresentSub(Long id){return em.contains(em.find(CategorySub.class, id));}
+    public boolean isPresentSubSub(Long id){return em.contains(em.find(CategorySubSub.class, id));}
 
 }
 

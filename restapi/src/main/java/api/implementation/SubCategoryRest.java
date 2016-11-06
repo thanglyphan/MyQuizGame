@@ -89,6 +89,47 @@ public class SubCategoryRest implements SubCategoryRestApi {
         return Converter.transformSubSub(categorySubSubs);
     }
 
+    @Override
+    public void update(Long pathId, SubCategoryDto dto) {
+        Long id;
+        try{
+            id = Long.parseLong(dto.id);
+        } catch (Exception e){
+            throw new WebApplicationException("Invalid id: " + pathId, 400);
+        }
+        if(!id.equals(pathId)){
+            // in this case, 409 (Conflict) sounds more appropriate than the generic 400
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+
+        if(! categoryEJB.isPresentSub(id) || !categoryEJB.getSub(id).isSub()){
+            throw new WebApplicationException("Not allowed to create a news with PUT, and cannot find news with id: "+id, 404);
+        }
+
+        try {
+            categoryEJB.updateSub(id, Long.parseLong(dto.rootId), dto.subCategory);
+        } catch (Exception e){
+            throw wrapException(e);
+        }
+    }
+
+
+    @Override
+    public void patch(@ApiParam("The unique id of the counter") Long id, @ApiParam("Change sub category") String text) {
+        CategorySub categorySub = categoryEJB.getSub(id);
+        if (categorySub == null || !categorySub.isSub()) {
+            throw new WebApplicationException("Cannot find counter with id " + id, 404);
+        }
+        String subCategory;
+        try {
+            subCategory = text;
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException("Invalid instructions. Should contain just a number: \"" + text + "\"");
+        }
+        categoryEJB.updatePatchSub(id, subCategory);
+        Converter.transform(categorySub);
+    }
+
     //----------------------------------------------------------
 
     protected WebApplicationException wrapException(Exception e) throws WebApplicationException{

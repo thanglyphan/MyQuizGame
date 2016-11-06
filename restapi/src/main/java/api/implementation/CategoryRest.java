@@ -29,6 +29,8 @@ import javax.ws.rs.WebApplicationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
     The actual implementation could be a EJB, eg if we want to handle
@@ -38,6 +40,7 @@ import java.util.List;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) //avoid creating new transactions
 public class CategoryRest implements CategoryRestApi {
     private Category category;
+
     @EJB
     protected CategoryEJB categoryEJB;
 
@@ -46,7 +49,7 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public List<CategoryDto> get() {
-
+/*
         Category a = categoryEJB.createCategory("Thang");
         CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
         CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
@@ -54,7 +57,7 @@ public class CategoryRest implements CategoryRestApi {
 
         Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
         quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
-
+*/
         return Converter.transform(categoryEJB.getCategoryList());
     }
 
@@ -80,6 +83,48 @@ public class CategoryRest implements CategoryRestApi {
     public void delete(@ApiParam(ID_PARAM) Long id) {
         categoryEJB.deleteCategory(id);
     }
+
+    @Override
+    public void update(Long pathId, CategoryDto dto) {
+        Long id;
+        try{
+            id = Long.parseLong(dto.id);
+        } catch (Exception e){
+            throw new WebApplicationException("Invalid id: " + dto.id, 400);
+        }
+
+        if(!id.equals(pathId)){
+            // in this case, 409 (Conflict) sounds more appropriate than the generic 400
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+
+        if(! categoryEJB.isPresent(id) || !categoryEJB.get(id).isRoot()){
+            throw new WebApplicationException("Not allowed to create a news with PUT, and cannot find news with id: "+id, 404);
+        }
+
+        try {
+            categoryEJB.update(id, dto.rootCategory);
+        } catch (Exception e){
+            throw wrapException(e);
+        }
+    }
+
+    @Override
+    public void patch(@ApiParam("The unique id of the counter") Long id, @ApiParam("Change root category") String text) {
+        Category category = categoryEJB.get(id);
+        if (category == null || !category.isRoot()) {
+            throw new WebApplicationException("Cannot find counter with id " + id, 404);
+        }
+        String rootCategory;
+        try {
+            rootCategory = text;
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException("Invalid instructions. Should contain just a number: \"" + text + "\"");
+        }
+        categoryEJB.updatePatch(id, rootCategory);
+        Converter.transform(category);
+    }
+
 
     @Override
     public List<CategoryDto> getCategoriesWithQuiz() {

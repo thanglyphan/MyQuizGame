@@ -1,7 +1,5 @@
 package datalayer.categories;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;

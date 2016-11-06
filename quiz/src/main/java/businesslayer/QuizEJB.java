@@ -1,5 +1,7 @@
 package businesslayer;
 
+import datalayer.categories.Category;
+import datalayer.categories.CategorySub;
 import datalayer.quiz.Quiz;
 import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Answer;
@@ -8,6 +10,7 @@ import datalayer.essentials.Question;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +69,31 @@ public class QuizEJB implements Serializable{
         em.merge(question);
     }
 
+    public boolean updatePatch(Long id, String quizName){
+        Quiz quiz = em.find(Quiz.class, id);
 
+        if(quiz == null){
+            return false;
+        }
+        quiz.setQuizName(quizName);
+        return true;
+    }
+    public boolean update(@NotNull Long id, @NotNull Long categorySubSubId, @NotNull String quizName){
+        Quiz quiz = em.find(Quiz.class, id);
+        if(quiz == null){
+            return false;
+        }
+        List<Question> questionList = quiz.getQuestionList();
+        em.find(CategorySubSub.class, categorySubSubId).getQuizList().remove(quiz);
 
+        quiz.setQuizName(quizName);
+        quiz.setCategorySubSub(em.find(CategorySubSub.class, categorySubSubId));
+        quiz.setQuestionList(questionList);
+
+        em.find(CategorySubSub.class, categorySubSubId).getQuizList().add(quiz);
+
+        return true;
+    }
 
 
 
@@ -83,4 +109,6 @@ public class QuizEJB implements Serializable{
     }
     public Question getQuestion(Long id) { return em.find(Question.class, id); }
     public void deleteQuiz(Long id){ em.remove(em.find(Quiz.class, id));}
+    public boolean isPresent(Long id){return em.contains(em.find(Quiz.class, id));}
+
 }

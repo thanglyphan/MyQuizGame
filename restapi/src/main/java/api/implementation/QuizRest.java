@@ -74,6 +74,45 @@ public class QuizRest implements QuizRestApi {
         quizEJB.deleteQuiz(id);
     }
 
+    @Override
+    public void update(Long pathId, QuizDto dto) {
+        Long id;
+        try{
+            id = Long.parseLong(dto.id);
+        } catch (Exception e){
+            throw new WebApplicationException("Invalid id: " + pathId, 400);
+        }
+        if(!id.equals(pathId)){
+            // in this case, 409 (Conflict) sounds more appropriate than the generic 400
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+        if(! quizEJB.isPresent(id)){
+            throw new WebApplicationException("Not allowed to create a news with PUT, and cannot find news with id: "+id, 404);
+        }
+
+        try {
+            quizEJB.update(id, Long.parseLong(dto.subSubCategoryId), dto.quizName);
+        } catch (Exception e){
+            throw wrapException(e);
+        }
+    }
+
+    @Override
+    public void patch(@ApiParam("The unique id of the quiz") Long id, @ApiParam("Change quiz name") String text) {
+        Quiz quiz = quizEJB.get(id);
+        if (quiz == null) {
+            throw new WebApplicationException("Cannot find counter with id " + id, 404);
+        }
+        String quizName;
+        try {
+            quizName = text;
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException("Invalid instructions. Should contain just a number: \"" + text + "\"");
+        }
+        quizEJB.updatePatch(id, quizName);
+        Converter.transform(quiz);
+    }
+
     //----------------------------------------------------------
 
     protected WebApplicationException wrapException(Exception e) throws WebApplicationException{

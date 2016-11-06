@@ -1,6 +1,8 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import datalayer.categories.Category;
+import datalayer.categories.CategorySub;
 import dto.CategoryDto;
+import dto.SubCategoryDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.BeforeClass;
@@ -17,7 +19,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by thang on 30.10.2016.
  */
-public class CategoryTestITdasd extends CategoryRestTestBase{
+public class CategoryTestIT extends CategoryRestTestBase{
 
     @Test
     public void testCleanDB() {
@@ -28,14 +30,13 @@ public class CategoryTestITdasd extends CategoryRestTestBase{
     }
 
     @Test
-    public void testCreateAndGet() {
-
+    public void testCreateAndGetCategory() {
         String rootCategory = "Thangs life";
         CategoryDto dto = new CategoryDto(null, rootCategory);
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
+        String rootId = given().contentType(ContentType.JSON)
                 .body(dto)
                 .post()
                 .then()
@@ -44,11 +45,11 @@ public class CategoryTestITdasd extends CategoryRestTestBase{
 
         get().then().statusCode(200).body("size()", is(1));
 
-        given().pathParam("id", id)
+        given().pathParam("id", rootId)
                 .get("/id/{id}")
                 .then()
                 .statusCode(200)
-                .body("id", is(id))
+                .body("id", is(rootId))
                 .body("rootCategory", is(rootCategory));
     }
 }

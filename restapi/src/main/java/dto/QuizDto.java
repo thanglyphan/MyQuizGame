@@ -15,12 +15,14 @@ import java.util.Map;
 
 @ApiModel("A Quiz")
 public class QuizDto {
-    @ApiModelProperty(value = "The id of the QUIZ", hidden = true)
+    @ApiModelProperty("The id of the QUIZ")
     public String id;
+    /*
     @ApiModelProperty("The root category id")
     public String rootId;
     @ApiModelProperty("The sub category id")
     public String subCategoryId;
+    */
     @ApiModelProperty("The sub sub category id")
     public String subSubCategoryId;
     @ApiModelProperty(value = "The root category", hidden = true)

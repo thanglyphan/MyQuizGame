@@ -11,6 +11,7 @@ import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
 import dto.Converter;
+import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
 
@@ -74,6 +75,48 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             throw wrapException(e);
         }
         return Converter.transformSubSub(categorySubSubs);
+    }
+
+    @Override
+    public void update(Long pathId, SubSubCategoryDto dto) {
+        Long id;
+        try{
+            id = Long.parseLong(dto.id);
+        } catch (Exception e){
+            throw new WebApplicationException("Invalid id: " + pathId, 400);
+        }
+        if(!id.equals(pathId)){
+            // in this case, 409 (Conflict) sounds more appropriate than the generic 400
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+        if(! categoryEJB.isPresentSubSub(id) || !categoryEJB.getSubSub(id).isSubSub()){
+            throw new WebApplicationException("Not allowed to create a news with PUT, and cannot find news with id: "+id, 404);
+        }
+        if( categoryEJB.get(Long.parseLong(dto.rootId)) == null || categoryEJB.getSub(Long.parseLong(dto.subCategoriId)) == null){
+            throw new WebApplicationException("Invalid id", 404);
+        }
+
+        try {
+            categoryEJB.updateSubSub(id, Long.parseLong(dto.rootId), Long.parseLong(dto.subCategoriId), dto.subSubCategory);
+        } catch (Exception e){
+            throw wrapException(e);
+        }
+    }
+
+    @Override
+    public void patch(@ApiParam("The unique id of the counter") Long id, @ApiParam("Change sub sub category") String text) {
+        CategorySubSub categorySubSub = categoryEJB.getSubSub(id);
+        if (categorySubSub == null || !categorySubSub.isSubSub()) {
+            throw new WebApplicationException("Cannot find counter with id " + id, 404);
+        }
+        String subCategory;
+        try {
+            subCategory = text;
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException("Invalid instructions. Should contain just a number: \"" + text + "\"");
+        }
+        categoryEJB.updatePatchSubSub(id, subCategory);
+        Converter.transform(categorySubSub);
     }
 
     //----------------------------------------------------------

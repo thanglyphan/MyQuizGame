@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.jaxrs.PATCH;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -53,5 +54,28 @@ public interface SubCategoryRestApi {
     @GET
     @Path("/id/{id}/subsubcategories")
     List<SubSubCategoryDto> getSubSubcategoriesById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    @ApiOperation("Update an existing sub category")
+    @PUT
+    @Path("/id/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void update(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id,
+            //
+            @ApiParam("The sub category that will replace the old one. Cannot change its id though.")
+                    SubCategoryDto dto);
+
+    @ApiOperation("Modify the rootcategory")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON) // could have had a custom type here, but then would need unmarshaller for it
+    void patch(@ApiParam("The unique id of the counter")
+               @PathParam("id")
+                       Long id,
+               //
+               @ApiParam("Change sub category")
+                       String text);
 
 }
