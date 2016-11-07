@@ -18,6 +18,7 @@ import dto.CategoryDto;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
+import org.apache.http.client.utils.URIBuilder;
 
 
 import javax.ejb.EJB;
@@ -26,7 +27,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +79,7 @@ public class CategoryRest implements CategoryRestApi {
     }
 
     @Override
-    public CategoryDto getById(Long id) {
+    public CategoryDto getById(@ApiParam(ID_PARAM) Long id) {
         return Converter.transform(categoryEJB.get(id));
     }
 
@@ -176,4 +180,25 @@ public class CategoryRest implements CategoryRestApi {
             return new WebApplicationException("Internal error", 500);
         }
     }
+    //------------------------------------------------ DEPRECATED ------------------------------------------------//
+    @Override
+    public Response deprecatedGetById(Long id) {
+        return Response.status(301).location(URI.create("categories/" + id)).build();
+    }
+
+    @Override
+    public Response deprecatedUpdate(Long id, CategoryDto dto) {
+        return Response.status(301).location(URI.create("categories/" + id)).build();
+    }
+
+    @Override
+    public Response deprecatedDelete(Long id) {
+        return Response.status(301).location(URI.create("categories/" + id)).build();
+    }
+
+    @Override
+    public Response deprecatedPatch(Long id, String text) {
+        return Response.status(301).location(URI.create("categories/" + id)).build();
+    }
+
 }

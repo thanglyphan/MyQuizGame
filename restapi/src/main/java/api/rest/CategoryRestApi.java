@@ -8,20 +8,21 @@ import datalayer.categories.Category;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/categories" , description = "Handling of creating and retrieving categories")
 // when the url is "<base>/news", then this class will be used to handle it
 @Path("/categories")
-@Produces(MediaType.APPLICATION_JSON) // states that, when a method returns something, it is in Json
+@Produces({
+        Formats.BASE_JSON,
+        Formats.V1_JSON
+})
 public interface CategoryRestApi {
     String ID_PARAM ="The numeric id of the categories";
 
@@ -43,25 +44,17 @@ public interface CategoryRestApi {
     @ApiOperation("Update an existing category")
     @PUT
     @Path("/id/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
     void update(
-            @ApiParam(ID_PARAM)
-            @PathParam("id")
-                    Long id,
-            //
-            @ApiParam("The category that will replace the old one. Cannot change its id though.")
-                    CategoryDto dto);
+            @ApiParam(ID_PARAM) @PathParam("id") Long id,
+            @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
 
     @ApiOperation("Modify the rootcategory")
     @Path("/id/{id}")
     @PATCH
-    @Consumes(MediaType.APPLICATION_JSON) // could have had a custom type here, but then would need unmarshaller for it
-    void patch(@ApiParam("The unique id of the counter")
-                      @PathParam("id")
-                              Long id,
-                      //
-                      @ApiParam("Change root category")
-                       String text);
+    @Consumes(MediaType.TEXT_PLAIN) // could have had a custom type here, but then would need unmarshaller for it
+    void patch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
+               @ApiParam("Change root category") String text);
 
     @ApiOperation("Delete a category with the given id")
     @DELETE
@@ -82,4 +75,61 @@ public interface CategoryRestApi {
     @GET
     @Path("/id/{id}/subcategories")
     List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+
+
+
+
+
+
+
+    //------------------------------------------------ DECREPATED ------------------------------------------------//
+    //Method start
+    @ApiOperation("Get a single category specified by id")
+    @ApiResponses({
+            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    })
+    @GET
+    @Path("/id/{id}")
+    @Deprecated
+    Response deprecatedGetById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+    //------------------------------------------------ DECREPATED ------------------------------------------------//
+
+    //Method start
+    @ApiOperation("Update an existing news")
+    @ApiResponses({
+            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    })
+    @PUT
+    @Path("/id/{id}")
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Deprecated
+    Response deprecatedUpdate(@ApiParam(ID_PARAM) @PathParam("id") Long id,
+                              @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
+    //------------------------------------------------ DECREPATED ------------------------------------------------//
+
+    //Method start
+    @ApiOperation("Delete single category")
+    @ApiResponses({
+            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    })
+    @DELETE
+    @Path("/id/{id}")
+    @Deprecated
+    Response deprecatedDelete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+    //------------------------------------------------ DECREPATED ------------------------------------------------//
+
+    //Method start
+    @ApiOperation("Modify the rootcategory")
+    @ApiResponses({
+            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    })
+    @PATCH
+    @Path("/id/{id}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Deprecated
+    Response deprecatedPatch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
+                             @ApiParam("Change root category") String text);
+
+
 }
