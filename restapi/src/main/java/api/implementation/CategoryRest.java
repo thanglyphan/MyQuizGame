@@ -180,25 +180,26 @@ public class CategoryRest implements CategoryRestApi {
             return new WebApplicationException("Internal error", 500);
         }
     }
+
     //------------------------------------------------ DEPRECATED ------------------------------------------------//
     @Override
     public Response deprecatedGetById(Long id) {
-        return Response.status(301).location(URI.create("categories/" + id)).build();
+        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
     }
 
     @Override
     public Response deprecatedUpdate(Long id, CategoryDto dto) {
-        return Response.status(301).location(URI.create("categories/" + id)).build();
+        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
     }
 
     @Override
     public Response deprecatedDelete(Long id) {
-        return Response.status(301).location(URI.create("categories/" + id)).build();
+        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
     }
 
     @Override
     public Response deprecatedPatch(Long id, String text) {
-        return Response.status(301).location(URI.create("categories/" + id)).build();
+        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
     }
 
 }

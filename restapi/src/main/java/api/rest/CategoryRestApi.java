@@ -3,8 +3,6 @@ package api.rest;
 /**
  * Created by thang on 31.10.2016.
  */
-
-import datalayer.categories.Category;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
@@ -90,10 +88,10 @@ public interface CategoryRestApi {
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @GET
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Deprecated
     Response deprecatedGetById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-    //------------------------------------------------ DECREPATED ------------------------------------------------//
+    //------------------------------------------------------------------------------------------------------------//
 
     //Method start
     @ApiOperation("Update an existing news")
@@ -101,12 +99,12 @@ public interface CategoryRestApi {
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @PUT
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
     @Deprecated
     Response deprecatedUpdate(@ApiParam(ID_PARAM) @PathParam("id") Long id,
                               @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
-    //------------------------------------------------ DECREPATED ------------------------------------------------//
+    //------------------------------------------------------------------------------------------------------------//
 
     //Method start
     @ApiOperation("Delete single category")
@@ -114,10 +112,10 @@ public interface CategoryRestApi {
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @DELETE
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Deprecated
     Response deprecatedDelete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-    //------------------------------------------------ DECREPATED ------------------------------------------------//
+    //------------------------------------------------------------------------------------------------------------//
 
     //Method start
     @ApiOperation("Modify the rootcategory")
@@ -125,11 +123,10 @@ public interface CategoryRestApi {
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @PATCH
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Consumes(MediaType.TEXT_PLAIN)
     @Deprecated
     Response deprecatedPatch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
                              @ApiParam("Change root category") String text);
-
 
 }
