@@ -11,14 +11,12 @@ import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
-import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
-import org.apache.http.client.utils.URIBuilder;
 
 
 import javax.ejb.EJB;
@@ -33,13 +31,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-/*
-    The actual implementation could be a EJB, eg if we want to handle
-    transactions and dependency injections with @EJB.
- */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) //avoid creating new transactions
 public class CategoryRest implements CategoryRestApi {
@@ -68,10 +60,10 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public Long createCategory(@ApiParam("Categoryname") CategoryDto dto) {
         Long id;
-        try{
+        try {
             this.category = categoryEJB.createCategory(dto.rootCategory);
             id = category.getId();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw wrapException(e);
         }
 
@@ -91,24 +83,24 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public void update(Long pathId, CategoryDto dto) {
         Long id;
-        try{
+        try {
             id = Long.parseLong(dto.id);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new WebApplicationException("Invalid id: " + dto.id, 400);
         }
 
-        if(!id.equals(pathId)){
+        if (!id.equals(pathId)) {
             // in this case, 409 (Conflict) sounds more appropriate than the generic 400
             throw new WebApplicationException("Not allowed to change the id of the resource", 409);
         }
 
-        if(! categoryEJB.isPresent(id) || !categoryEJB.get(id).isRoot()){
-            throw new WebApplicationException("Not allowed to create a news with PUT, and cannot find news with id: "+id, 404);
+        if (!categoryEJB.isPresent(id) || !categoryEJB.get(id).isRoot()) {
+            throw new WebApplicationException("Not allowed to create a news with PUT, and cannot find news with id: " + id, 404);
         }
 
         try {
             categoryEJB.update(id, dto.rootCategory);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw wrapException(e);
         }
     }
@@ -133,7 +125,7 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public List<CategoryDto> getCategoriesWithQuiz() {
         List<Category> list = new ArrayList<>();
-        for(Quiz a: quizEJB.getQuizList()){
+        for (Quiz a : quizEJB.getQuizList()) {
             list.add(a.getCategorySubSub().getCategory());
         }
         return Converter.transform(list);
@@ -142,7 +134,7 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public List<SubSubCategoryDto> getSubSubCategoriesWithQuiz() {
         List<CategorySubSub> list = new ArrayList<>();
-        for(Quiz a: quizEJB.getQuizList()){
+        for (Quiz a : quizEJB.getQuizList()) {
             list.add(a.getCategorySubSub());
         }
         return Converter.transformSubSub(list);
@@ -151,12 +143,12 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
         List<CategorySub> list = new ArrayList<>();
-        try{
+        try {
             Category found = categoryEJB.get(id);
-            for(CategorySub a: found.getCategorySubs()){
+            for (CategorySub a : found.getCategorySubs()) {
                 list.add(a);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw wrapException(e);
         }
 
@@ -165,7 +157,7 @@ public class CategoryRest implements CategoryRestApi {
 
     //----------------------------------------------------------
 
-    protected WebApplicationException wrapException(Exception e) throws WebApplicationException{
+    protected WebApplicationException wrapException(Exception e) throws WebApplicationException {
 
         /*
             Errors:
@@ -174,32 +166,44 @@ public class CategoryRest implements CategoryRestApi {
          */
 
         Throwable cause = Throwables.getRootCause(e);
-        if(cause instanceof ConstraintViolationException){
-            return new WebApplicationException("Invalid constraints on input: "+cause.getMessage(), 400);
+        if (cause instanceof ConstraintViolationException) {
+            return new WebApplicationException("Invalid constraints on input: " + cause.getMessage(), 400);
         } else {
             return new WebApplicationException("Internal error", 500);
         }
     }
 
     //------------------------------------------------ DEPRECATED ------------------------------------------------//
+/*
     @Override
     public Response deprecatedGetById(Long id) {
-        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+        return Response.status(301)
+                .location(UriBuilder.fromUri("categories/id/" + id).build())
+                .build();
     }
 
     @Override
     public Response deprecatedUpdate(Long id, CategoryDto dto) {
-        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+        return Response.status(301)
+                //.location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+                .location(UriBuilder.fromUri("categories/id/" + id).build())
+                .build();
     }
 
     @Override
     public Response deprecatedDelete(Long id) {
-        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+        return Response.status(301)
+                //.location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+                .location(UriBuilder.fromUri("categories/id/" + id).build())
+                .build();
     }
 
     @Override
     public Response deprecatedPatch(Long id, String text) {
-        return Response.status(301).location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+        return Response.status(301)
+                //.location(UriBuilder.fromUri("categories/id/" + id).build()).build();
+                .location(UriBuilder.fromUri("categories/id/" + id).build())
+                .build();
     }
-
+*/
 }

@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/categories" , description = "Handling of creating and retrieving categories")
-// when the url is "<base>/news", then this class will be used to handle it
 @Path("/categories")
 @Produces({
         Formats.BASE_JSON,
@@ -30,19 +29,21 @@ public interface CategoryRestApi {
 
     @ApiOperation("Create a new category")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
     @ApiResponse(code = 200, message = "The id of newly created category")
     Long createCategory(@ApiParam("Categoryname") CategoryDto dto);
 
     @ApiOperation("Get a single category specified by id")
     @GET
     @Path("/id/{id}")
+    @Produces(Formats.BASE_JSON)
     CategoryDto getById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
     @ApiOperation("Update an existing category")
     @PUT
     @Path("/id/{id}")
-    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     void update(
             @ApiParam(ID_PARAM) @PathParam("id") Long id,
             @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
@@ -50,7 +51,8 @@ public interface CategoryRestApi {
     @ApiOperation("Modify the rootcategory")
     @Path("/id/{id}")
     @PATCH
-    @Consumes(MediaType.TEXT_PLAIN) // could have had a custom type here, but then would need unmarshaller for it
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
     void patch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
                @ApiParam("Change root category") String text);
 
@@ -80,53 +82,57 @@ public interface CategoryRestApi {
 
 
 
-
+/*
     //------------------------------------------------ DECREPATED ------------------------------------------------//
     //Method start
-    @ApiOperation("Get a single category specified by id")
-    @ApiResponses({
-            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
-    })
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     @GET
-    @Path("/{id}")
+    @Path("/id/{id}")
+    @Produces(Formats.BASE_JSON)
     @Deprecated
     Response deprecatedGetById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-    //------------------------------------------------------------------------------------------------------------//
 
+
+    //------------------------------------------------------------------------------------------------------------//
     //Method start
-    @ApiOperation("Update an existing news")
+    @ApiOperation("Update an existing category")
     @ApiResponses({
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @PUT
-    @Path("/{id}")
-    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Path("/id/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Deprecated
     Response deprecatedUpdate(@ApiParam(ID_PARAM) @PathParam("id") Long id,
                               @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
-    //------------------------------------------------------------------------------------------------------------//
 
-    //Method start
-    @ApiOperation("Delete single category")
-    @ApiResponses({
-            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
-    })
-    @DELETE
-    @Path("/{id}")
-    @Deprecated
-    Response deprecatedDelete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-    //------------------------------------------------------------------------------------------------------------//
 
+    //------------------------------------------------------------------------------------------------------------//
     //Method start
     @ApiOperation("Modify the rootcategory")
     @ApiResponses({
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @PATCH
-    @Path("/{id}")
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/id/{id}")
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
     @Deprecated
     Response deprecatedPatch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
                              @ApiParam("Change root category") String text);
 
+
+    //------------------------------------------------------------------------------------------------------------//
+    //Method start
+    @ApiOperation("Delete a category with the given id")
+    @ApiResponses({
+            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    })
+    @DELETE
+    @Path("/id/{id}")
+    @Deprecated
+    Response deprecatedDelete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    */
 }
