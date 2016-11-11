@@ -170,6 +170,15 @@ public class CategoryEJB {
     public List<CategorySubSub> getCategoryListSubSub(){
         return em.createNamedQuery(Category.FIND_ALL_SUBSUB).getResultList();
     }
+    public List<CategorySubSub> getCategoryListSubSubWithQuizzes(){
+        List<CategorySubSub> list = new ArrayList<>();
+        for(CategorySubSub a: getCategoryListSubSub()){
+            if(a.getQuizList().size() > 0){
+                list.add(a);
+            }
+        }
+        return list;
+    }
     public Category get(@NotNull Long categoryId) {
         return em.find(Category.class, categoryId);
     }

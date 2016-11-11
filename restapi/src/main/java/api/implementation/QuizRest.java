@@ -23,6 +23,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.util.List;
 
 /*
@@ -129,5 +131,33 @@ public class QuizRest implements QuizRestApi {
         } else {
             return new WebApplicationException("Internal error", 500);
         }
+    }
+
+    //------------------------------------------------ DEPRECATED ------------------------------------------------//
+
+    @Override
+    public Response deprecatedGetById(@ApiParam(ID_PARAM) Long id) {
+        return Response.status(301)
+                .location(UriBuilder.fromUri("quizzes/" + id).build())
+                .build();
+    }
+
+    @Override
+    public Response deprecatedDelete(@ApiParam(ID_PARAM) Long id) {
+        return Response.status(301)
+                .location(UriBuilder.fromUri("quizzes/" + id).build())
+                .build();    }
+
+    @Override
+    public Response deprecatedUpdate(@ApiParam(ID_PARAM) Long id, @ApiParam("The sub sub category that will replace the old one. Cannot change its id though.") QuizDto dto) {
+        return Response.status(301)
+                .location(UriBuilder.fromUri("quizzes/" + id).build())
+                .build();    }
+
+    @Override
+    public Response deprecatedPatch(@ApiParam("The unique id of the quiz") Long id, @ApiParam("Change quiz name") String text) {
+        return Response.status(301)
+                .location(UriBuilder.fromUri("quizzes/" + id).build())
+                .build();
     }
 }

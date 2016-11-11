@@ -21,6 +21,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class SubCategoryRest implements SubCategoryRestApi {
             categoryEJB.deleteCategory(id);
     }
 
+    /*
     @Override
     public List<SubCategoryDto> getSubcategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
         List<CategorySub> categorySubs;
@@ -76,7 +79,7 @@ public class SubCategoryRest implements SubCategoryRestApi {
         }
         return Converter.transformSub(categorySubs);
     }
-
+    */
     @Override
     public List<SubSubCategoryDto> getSubSubcategoriesById(@ApiParam(ID_PARAM) Long id) {
         List<CategorySubSub> categorySubSubs;
@@ -130,6 +133,7 @@ public class SubCategoryRest implements SubCategoryRestApi {
         Converter.transform(categorySub);
     }
 
+
     //----------------------------------------------------------
 
     protected WebApplicationException wrapException(Exception e) throws WebApplicationException{
@@ -146,6 +150,38 @@ public class SubCategoryRest implements SubCategoryRestApi {
         } else {
             return new WebApplicationException("Internal error", 500);
         }
+    }
+
+    //------------------------------------------------ DEPRECATED ------------------------------------------------//
+
+    @Override
+    public Response deprecatedGetById(@ApiParam(ID_PARAM) Long id) {
+        return Responder.response("subcategories/", 301, id, "");
+    }
+
+    @Override
+    public Response deprecatedDelete(@ApiParam(ID_PARAM) Long id) {
+        return Responder.response("subcategories/", 301, id, "");
+    }
+
+    @Override
+    public Response deprecatedUpdate(@ApiParam(ID_PARAM) Long id, @ApiParam("The sub category that will replace the old one. Cannot change its id though.") SubCategoryDto dto) {
+        return Responder.response("subcategories/", 301, id, "");
+    }
+
+    @Override
+    public Response deprecatedPatch(@ApiParam("The unique id of the counter") Long id, @ApiParam("Change sub category") String text) {
+        return Responder.response("subcategories/", 301, id, "");
+    }
+
+    @Override
+    public Response deprecatedGetSubCategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
+        return Responder.response("/categories/", 301, id, "/subcategories");
+    }
+
+    @Override
+    public Response deprecatedGetSubSubCategoriesBySubId(@ApiParam(ID_PARAM) Long id) {
+        return Responder.response("subcategories/", 301, id, "/subsubcategories");
     }
 
 }

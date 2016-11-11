@@ -23,10 +23,12 @@ import java.util.List;
 public interface CategoryRestApi {
     String ID_PARAM ="The numeric id of the categories";
 
+    //Method start
     @ApiOperation("Get all the categories")
     @GET
     List<CategoryDto> get();
 
+    //Method start
     @ApiOperation("Create a new category")
     @POST
     @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
@@ -34,105 +36,103 @@ public interface CategoryRestApi {
     @ApiResponse(code = 200, message = "The id of newly created category")
     Long createCategory(@ApiParam("Categoryname") CategoryDto dto);
 
-    @ApiOperation("Get a single category specified by id")
-    @GET
-    @Path("/id/{id}")
-    @Produces(Formats.BASE_JSON)
-    CategoryDto getById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-
-    @ApiOperation("Update an existing category")
-    @PUT
-    @Path("/id/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    void update(
-            @ApiParam(ID_PARAM) @PathParam("id") Long id,
-            @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
-
-    @ApiOperation("Modify the rootcategory")
-    @Path("/id/{id}")
-    @PATCH
-    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
-    @Produces(Formats.BASE_JSON)
-    void patch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
-               @ApiParam("Change root category") String text);
-
-    @ApiOperation("Delete a category with the given id")
-    @DELETE
-    @Path("/id/{id}")
-    void delete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-
+    //Method start
     @ApiOperation("GET all categories that have at least one subcategory with at least one subsubcategory with at least one quiz.")
     @GET
     @Path("/withQuizzes")
     List<CategoryDto> getCategoriesWithQuiz();
 
+    //Method start
     @ApiOperation("GET all subsubcategories with at least one quiz.")
     @GET
     @Path("/withQuizzes/subsubcategories")
     List<SubSubCategoryDto> getSubSubCategoriesWithQuiz();
 
-    @ApiOperation("GET all subcategories of the category specified by id.")
-    @GET
-    @Path("/id/{id}/subcategories")
-    List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-
-
-
-
-
-
-
-/*
-    //------------------------------------------------ DECREPATED ------------------------------------------------//
     //Method start
-    @ApiOperation("Deprecated. Use \"id\" instead")
-    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @ApiOperation("Get a single category specified by id")
     @GET
-    @Path("/id/{id}")
-    @Produces(Formats.BASE_JSON)
-    @Deprecated
-    Response deprecatedGetById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+    @Path("/{id}")
+    CategoryDto getById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
 
-    //------------------------------------------------------------------------------------------------------------//
     //Method start
     @ApiOperation("Update an existing category")
-    @ApiResponses({
-            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
-    })
     @PUT
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Deprecated
-    Response deprecatedUpdate(@ApiParam(ID_PARAM) @PathParam("id") Long id,
-                              @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
+    void update(@ApiParam(ID_PARAM) @PathParam("id") Long id,
+                @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
 
-
-    //------------------------------------------------------------------------------------------------------------//
     //Method start
     @ApiOperation("Modify the rootcategory")
-    @ApiResponses({
-            @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
-    })
     @PATCH
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
     @Produces(Formats.BASE_JSON)
-    @Deprecated
-    Response deprecatedPatch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
-                             @ApiParam("Change root category") String text);
+    void patch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
+               @ApiParam("Change root category") String text);
 
-
-    //------------------------------------------------------------------------------------------------------------//
     //Method start
     @ApiOperation("Delete a category with the given id")
     @ApiResponses({
             @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     })
     @DELETE
+    @Path("/{id}")
+    void delete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    //Method start
+    @ApiOperation("GET all subcategories of the category specified by id.")
+    @GET
+    @Path("/{id}/subcategories")
+    List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+
+    //------------------------------------------------ DECREPATED ------------------------------------------------//
+
+    //Method start
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @GET
     @Path("/id/{id}")
+    @Deprecated
+    Response deprecatedGetById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    //Method start
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @PUT
+    @Path("/id/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Deprecated
+    Response deprecatedUpdate(
+            @ApiParam(ID_PARAM) @PathParam("id") Long id,
+            @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
+
+    //Method start
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
+    @Deprecated
+    Response deprecatedPatch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
+               @ApiParam("Change root category") String text);
+
+    //Method start
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @Path("/id/{id}")
+    @DELETE
     @Deprecated
     Response deprecatedDelete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
-    */
+    //Method start
+    @ApiOperation("Deprecated. Use \"{id}/subcategories\" instead.")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @GET
+    @Path("/id/{id}/subcategories")
+    @Deprecated
+    Response deprecatedGetSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 }

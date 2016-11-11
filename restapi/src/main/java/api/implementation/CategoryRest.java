@@ -11,6 +11,7 @@ import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
+import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
@@ -45,7 +46,7 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public List<CategoryDto> get() {
-/*
+
         Category a = categoryEJB.createCategory("Thang");
         CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
         CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
@@ -53,7 +54,7 @@ public class CategoryRest implements CategoryRestApi {
 
         Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
         quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
-*/
+
         return Converter.transform(categoryEJB.getCategoryList());
     }
 
@@ -174,36 +175,33 @@ public class CategoryRest implements CategoryRestApi {
     }
 
     //------------------------------------------------ DEPRECATED ------------------------------------------------//
-/*
     @Override
-    public Response deprecatedGetById(Long id) {
-        return Response.status(301)
-                .location(UriBuilder.fromUri("categories/id/" + id).build())
-                .build();
+    public Response deprecatedGetById(@ApiParam(ID_PARAM) Long id) {
+        //return Response.status(301).location(UriBuilder.fromUri("categories/" + id).build()).build();
+        return Responder.response("categories/", 301, id, "");
     }
 
     @Override
-    public Response deprecatedUpdate(Long id, CategoryDto dto) {
-        return Response.status(301)
-                //.location(UriBuilder.fromUri("categories/id/" + id).build()).build();
-                .location(UriBuilder.fromUri("categories/id/" + id).build())
-                .build();
+    public Response deprecatedUpdate(@ApiParam(ID_PARAM) Long id, @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto) {
+        return Responder.response("categories/", 301, id, "");
+
     }
 
     @Override
-    public Response deprecatedDelete(Long id) {
-        return Response.status(301)
-                //.location(UriBuilder.fromUri("categories/id/" + id).build()).build();
-                .location(UriBuilder.fromUri("categories/id/" + id).build())
-                .build();
+    public Response deprecatedPatch(@ApiParam("The unique id of the counter") Long id, @ApiParam("Change root category") String text) {
+        return Responder.response("categories/", 301, id, "");
+
     }
 
     @Override
-    public Response deprecatedPatch(Long id, String text) {
-        return Response.status(301)
-                //.location(UriBuilder.fromUri("categories/id/" + id).build()).build();
-                .location(UriBuilder.fromUri("categories/id/" + id).build())
-                .build();
+    public Response deprecatedDelete(@ApiParam(ID_PARAM) Long id) {
+        return Responder.response("categories/", 301, id, "");
+
     }
-*/
+
+    @Override
+    public Response deprecatedGetSubCategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
+        return Responder.response("categories/", 301, id, "/subcategories");
+
+    }
 }

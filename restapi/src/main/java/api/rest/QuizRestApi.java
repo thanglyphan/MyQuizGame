@@ -12,12 +12,16 @@ import io.swagger.jaxrs.PATCH;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/quizzes" , description = "The quiz api, get and post information")
 // when the url is "<base>/news", then this class will be used to handle it
 @Path("/quizzes")
-@Produces(MediaType.APPLICATION_JSON) // states that, when a method returns something, it is in Json
+@Produces({
+        Formats.BASE_JSON,
+        Formats.V1_JSON
+})
 public interface QuizRestApi {
     String ID_PARAM ="The numeric id of the categories";
 
@@ -27,25 +31,26 @@ public interface QuizRestApi {
 
     @ApiOperation("Create a new quiz")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
     @ApiResponse(code = 200, message = "The id of newly created category")
     Long createQuiz(@ApiParam("Create a quiz") QuizDto dto);
 
 
     @ApiOperation("Get a single quiz specified by id")
     @GET
-    @Path("/id/{id}")
+    @Path("/{id}")
     QuizDto getById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
     @ApiOperation("Delete a quiz with the given id")
     @DELETE
-    @Path("/id/{id}")
+    @Path("/{id}")
     void delete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
 
     @ApiOperation("Update an existing quiz")
     @PUT
-    @Path("/id/{id}")
+    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     void update(
             @ApiParam(ID_PARAM)
@@ -56,13 +61,55 @@ public interface QuizRestApi {
                     QuizDto dto);
 
     @ApiOperation("Modify the quiz")
-    @Path("/id/{id}")
+    @Path("/{id}")
     @PATCH
-    @Consumes(MediaType.APPLICATION_JSON) // could have had a custom type here, but then would need unmarshaller for it
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
     void patch(@ApiParam("The unique id of the quiz")
                @PathParam("id")
                        Long id,
                //
                @ApiParam("Change quiz name")
                        String text);
+
+    //------------------------------------------------ DECREPATED ------------------------------------------------//
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @GET
+    @Path("/id/{id}")
+    @Deprecated
+    Response deprecatedGetById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @DELETE
+    @Path("/id/{id}")
+    @Deprecated
+    Response deprecatedDelete(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+
+
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @PUT
+    @Path("/id/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Deprecated
+    Response deprecatedUpdate(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id,
+            //
+            @ApiParam("The sub sub category that will replace the old one. Cannot change its id though.")
+                    QuizDto dto);
+
+    @ApiOperation("Deprecated. Use \"id\" instead")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
+    @Produces(Formats.BASE_JSON)
+    @Deprecated
+    Response deprecatedPatch(@ApiParam("The unique id of the quiz")
+               @PathParam("id")
+                       Long id,
+               //
+               @ApiParam("Change quiz name")
+                       String text);
+
 }

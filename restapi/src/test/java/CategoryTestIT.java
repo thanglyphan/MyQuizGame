@@ -46,7 +46,7 @@ public class CategoryTestIT extends CategoryRestTestBase{
         get().then().statusCode(200).body("size()", is(1));
 
         given().pathParam("id", rootId)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("id", is(rootId))
