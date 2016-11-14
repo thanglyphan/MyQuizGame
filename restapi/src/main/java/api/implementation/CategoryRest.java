@@ -46,7 +46,7 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public List<CategoryDto> get() {
-
+/*
         Category a = categoryEJB.createCategory("Thang");
         CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
         CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
@@ -54,7 +54,7 @@ public class CategoryRest implements CategoryRestApi {
 
         Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
         quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
-
+*/
         return Converter.transform(categoryEJB.getCategoryList());
     }
 

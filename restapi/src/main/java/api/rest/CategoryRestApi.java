@@ -10,6 +10,7 @@ import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -59,7 +60,7 @@ public interface CategoryRestApi {
     @ApiOperation("Update an existing category")
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(Formats.V1_JSON)
     void update(@ApiParam(ID_PARAM) @PathParam("id") Long id,
                 @ApiParam("The category that will replace the old one. Cannot change its id though.") CategoryDto dto);
 
@@ -85,6 +86,7 @@ public interface CategoryRestApi {
     @ApiOperation("GET all subcategories of the category specified by id.")
     @GET
     @Path("/{id}/subcategories")
+    @Produces(Formats.V1_JSON)
     List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
 
@@ -103,7 +105,7 @@ public interface CategoryRestApi {
     @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     @PUT
     @Path("/id/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(Formats.V1_JSON)
     @Deprecated
     Response deprecatedUpdate(
             @ApiParam(ID_PARAM) @PathParam("id") Long id,
@@ -133,6 +135,7 @@ public interface CategoryRestApi {
     @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     @GET
     @Path("/id/{id}/subcategories")
+    @Produces(Formats.V1_JSON)
     @Deprecated
     Response deprecatedGetSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 }

@@ -2,8 +2,10 @@
  * Created by thang on 01.11.2016.
  */
 
+import api.rest.Formats;
 import com.google.gson.Gson;
 import dto.CategoryDto;
+import dto.SubCategoryDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.After;
@@ -43,5 +45,35 @@ public class CategoryRestTestBase {
                 given().pathParam("id", dto.id).delete("/{id}").then().statusCode(204));
 
         get().then().statusCode(200).body("size()", is(0));
+    }
+
+    protected String createCategory(String rootCategory){
+        CategoryDto dto = new CategoryDto(null, rootCategory);
+
+        String rootId = given().contentType(Formats.V1_JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(200)
+                .extract().asString();
+
+        return rootId;
+    }
+
+    protected String createSubCategory(String categoryId, String subCategory){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 8080;
+        RestAssured.basePath = "/myrest/api/subcategories/";
+        SubCategoryDto dto = new SubCategoryDto(null, categoryId, subCategory);
+
+        String rootId = given().contentType(Formats.V1_JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(200)
+                .extract().asString();
+        RestAssured.basePath = "/myrest/api/categories/";
+
+        return rootId;
     }
 }
