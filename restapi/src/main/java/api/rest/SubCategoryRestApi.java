@@ -54,7 +54,7 @@ public interface SubCategoryRestApi {
     @ApiOperation("Update an existing sub category")
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(Formats.V1_JSON)
     void update(
             @ApiParam(ID_PARAM)
             @PathParam("id")
@@ -106,7 +106,7 @@ public interface SubCategoryRestApi {
     @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     @PUT
     @Path("/id/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(Formats.V1_JSON)
     @Deprecated
     Response deprecatedUpdate(
             @ApiParam(ID_PARAM)

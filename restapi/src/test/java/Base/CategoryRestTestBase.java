@@ -1,4 +1,4 @@
-/**
+package Base; /**
  * Created by thang on 01.11.2016.
  */
 
@@ -6,6 +6,7 @@ import api.rest.Formats;
 import com.google.gson.Gson;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
+import dto.SubSubCategoryDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.After;
@@ -75,5 +76,27 @@ public class CategoryRestTestBase {
         RestAssured.basePath = "/myrest/api/categories/";
 
         return rootId;
+    }
+
+    protected String createSubSubCategory(String categoryId, String subCategoryId, String subSubCategory){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 8080;
+        RestAssured.basePath = "/myrest/api/subsubcategories/";
+        SubSubCategoryDto dto = new SubSubCategoryDto(null, categoryId, subCategoryId, subSubCategory);
+
+        String rootId = given().contentType(Formats.V1_JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(200)
+                .extract().asString();
+        RestAssured.basePath = "/myrest/api/categories/";
+
+        return rootId;
+    }
+
+
+    protected void changePath(String path){
+        RestAssured.basePath = "/myrest/api/" + path + "/";
     }
 }

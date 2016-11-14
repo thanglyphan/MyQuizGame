@@ -1,20 +1,7 @@
+import Base.CategoryRestTestBase;
 import api.rest.Formats;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import datalayer.categories.Category;
-import datalayer.categories.CategorySub;
 import dto.CategoryDto;
-import dto.SubCategoryDto;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import web.JBossUtil;
-
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.not;
@@ -23,7 +10,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by thang on 30.10.2016.
  */
-public class CategoryTestIT extends CategoryRestTestBase{
+public class CategoryTestIT extends CategoryRestTestBase {
 
     @Test
     public void testCleanDB() {
@@ -81,6 +68,19 @@ public class CategoryTestIT extends CategoryRestTestBase{
     }
 
     @Test
+    public void testInvalidUpdateId() {
+        String id = createCategory("Hello");
+        String updatedText = "New text";
+
+        given().contentType(Formats.V1_JSON)
+                .pathParam("id", id + 1)
+                .body(new CategoryDto(id, updatedText))
+                .put("/{id}")
+                .then()
+                .statusCode(409); // instead of 400
+    }
+
+    @Test
     public void testPatch(){
         String text = "someText";
         String id = createCategory(text);
@@ -120,18 +120,5 @@ public class CategoryTestIT extends CategoryRestTestBase{
     @Test
     public void testInvalidGetById() {
         get("/categories/3000").then().statusCode(404);
-    }
-
-    @Test
-    public void testInvalidUpdate() {
-        String id = createCategory("Hello");
-        String updatedText = "";
-
-        given().contentType(Formats.V1_JSON)
-                .pathParam("id", id)
-                .body(new CategoryDto(id, updatedText))
-                .put("/{id}")
-                .then()
-                .statusCode(400); // instead of 400
     }
 }
