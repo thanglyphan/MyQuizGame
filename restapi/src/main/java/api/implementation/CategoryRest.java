@@ -11,7 +11,6 @@ import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
-import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
@@ -29,7 +28,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,15 +44,6 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public List<CategoryDto> get() {
-/*
-        Category a = categoryEJB.createCategory("Thang");
-        CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
-        CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
-        Quiz d = quizEJB.createQuiz(c, "The fitness quiz");
-
-        Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
-        quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
-*/
         return Converter.transform(categoryEJB.getCategoryList());
     }
 
@@ -78,6 +67,15 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
+        /*
+        Category a = categoryEJB.createCategory("Thang");
+        CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
+        CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
+        Quiz d = quizEJB.createQuiz(c, "The fitness quiz");
+
+        Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
+        quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
+        */
         categoryEJB.deleteCategory(id);
     }
 
@@ -124,15 +122,6 @@ public class CategoryRest implements CategoryRestApi {
 
 
     @Override
-    public List<CategoryDto> getCategoriesWithQuiz() {
-        List<Category> list = new ArrayList<>();
-        for (Quiz a : quizEJB.getQuizList()) {
-            list.add(a.getCategorySubSub().getCategory());
-        }
-        return Converter.transform(list);
-    }
-
-    @Override
     public List<SubSubCategoryDto> getSubSubCategoriesWithQuiz() {
         List<CategorySubSub> list = new ArrayList<>();
         for (Quiz a : quizEJB.getQuizList()) {
@@ -155,6 +144,7 @@ public class CategoryRest implements CategoryRestApi {
 
         return Converter.transformSub(list);
     }
+
 
     //----------------------------------------------------------
 
@@ -204,4 +194,5 @@ public class CategoryRest implements CategoryRestApi {
         return Responder.response("categories/", 301, id, "/subcategories");
 
     }
+
 }
