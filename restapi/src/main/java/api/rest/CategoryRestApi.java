@@ -38,13 +38,13 @@ public interface CategoryRestApi {
     @ApiResponse(code = 200, message = "The id of newly created category")
     Long createCategory(@ApiParam("Categoryname") CategoryDto dto);
 
-    /*
+
     //Method start
     @ApiOperation("GET all categories that have at least one subcategory with at least one subsubcategory with at least one quiz.")
     @GET
     @Path("withQuizzes")
     List<CategoryDto> getCategoriesWithQuiz();
-    */
+
 
     //Method start
     @ApiOperation("GET all subsubcategories with at least one quiz.")

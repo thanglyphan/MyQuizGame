@@ -61,6 +61,15 @@ public class CategoryRest implements CategoryRestApi {
     }
 
     @Override
+    public List<CategoryDto> getCategoriesWithQuiz() {
+        List<Category> list = new ArrayList<>();
+        for (Quiz a : quizEJB.getQuizList()) {
+            list.add(a.getCategorySubSub());
+        }
+        return Converter.transform(list);
+    }
+
+    @Override
     public CategoryDto getById(@ApiParam(ID_PARAM) Long id) {
         return Converter.transform(categoryEJB.get(id));
     }
