@@ -204,4 +204,11 @@ public class CategoryRest implements CategoryRestApi {
 
     }
 
+    @Override
+    public Response deprecatedGetCategoriesWithQuiz() {
+        return Response.status(301)
+                .location(UriBuilder.fromUri("categories/").queryParam("withQuizzes", true).build())
+                .build();
+    }
+
 }

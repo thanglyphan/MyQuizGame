@@ -141,7 +141,7 @@ public interface CategoryRestApi {
     @Deprecated
     Response deprecatedGetSubCategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
 
-    /*
+
     //Method start
     @ApiOperation("Deprecated. Use \"?withQuizzes\" instead.")
     @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
@@ -149,6 +149,6 @@ public interface CategoryRestApi {
     @Path("/withQuizzes")
     @Deprecated
     Response deprecatedGetCategoriesWithQuiz();
-    */
+
 
 }
