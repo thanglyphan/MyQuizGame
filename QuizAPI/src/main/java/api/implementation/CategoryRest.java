@@ -11,6 +11,7 @@ import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
+import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
@@ -61,10 +62,13 @@ public class CategoryRest implements CategoryRestApi {
     }
 
     @Override
-    public List<CategoryDto> getCategoriesWithQuiz() {
+    public List<CategoryDto> getCategoriesWithQuiz(boolean withQuizzes) {
         List<Category> list = new ArrayList<>();
-        for (Quiz a : quizEJB.getQuizList()) {
-            list.add(a.getCategorySubSub());
+        if(withQuizzes){
+            for (Quiz a : quizEJB.getQuizList()) {
+                list.add(a.getCategorySubSub());
+            }
+            return Converter.transform(list);
         }
         return Converter.transform(list);
     }
@@ -76,15 +80,15 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
-        /*
-        Category a = categoryEJB.createCategory("Thang");
-        CategorySub b = categoryEJB.addSubToCategory(a, "Hobbies");
-        CategorySubSub c = categoryEJB.addSubSubToCategorySub(a, b, "Bodybuilding");
-        Quiz d = quizEJB.createQuiz(c, "The fitness quiz");
+        Category category = categoryEJB.createCategory("First");
+        CategorySub categorySub = categoryEJB.addSubToCategory(category, "Second");
+        CategorySubSub categorySubSub = categoryEJB.addSubSubToCategorySub(category, categorySub, "Third");
 
-        Question e = quizEJB.createQuestion(d, "How much does Thang bench?");
-        quizEJB.createAnswerToQuestion(e, "120kg", "110kg", "100kg", "90kg");
-        */
+        Quiz quiz = quizEJB.createQuiz(categorySubSub, "The Quiz");
+        Question question = quizEJB.createQuestion(quiz, "How much does Thang bench?");
+        quizEJB.createAnswerToQuestion(question, "120kg", "115kg", "110kg", "105kg");
+
+
         categoryEJB.deleteCategory(id);
     }
 
@@ -129,7 +133,7 @@ public class CategoryRest implements CategoryRestApi {
         Converter.transform(category);
     }
 
-
+    /*
     @Override
     public List<SubSubCategoryDto> getSubSubCategoriesWithQuiz() {
         List<CategorySubSub> list = new ArrayList<>();
@@ -138,6 +142,7 @@ public class CategoryRest implements CategoryRestApi {
         }
         return Converter.transformSubSub(list);
     }
+    */
 
     @Override
     public List<SubCategoryDto> getSubCategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
@@ -206,9 +211,15 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public Response deprecatedGetCategoriesWithQuiz() {
-        return Response.status(301)
+        return Response.status(307)
                 .location(UriBuilder.fromUri("categories/").queryParam("withQuizzes", true).build())
                 .build();
     }
 
+    @Override
+    public Response deprecatedGetSubSubCategoriesWithQuiz() {
+        return Response.status(307)
+                .location(UriBuilder.fromUri("/subsubcategories/").queryParam("withQuizzes", true).build())
+                .build();
+    }
 }

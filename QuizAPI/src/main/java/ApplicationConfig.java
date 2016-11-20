@@ -40,6 +40,7 @@ public class ApplicationConfig extends Application {
         c.add(SubSubCategoryRest.class);
         c.add(QuizRest.class);
         c.add(QuestionAnswersRest.class);
+        c.add(RandomQuizRest.class);
         //add further configuration to activate SWAGGER
         c.add(io.swagger.jaxrs.listing.ApiListingResource.class);
         c.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);

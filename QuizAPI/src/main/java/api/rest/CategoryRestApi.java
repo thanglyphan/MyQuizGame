@@ -3,6 +3,7 @@ package api.rest;
 /**
  * Created by thang on 31.10.2016.
  */
+
 import datalayer.categories.Category;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
@@ -16,14 +17,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Api(value = "/categories" , description = "Handling of creating and retrieving categories")
+@Api(value = "/categories", description = "Handling of creating and retrieving categories")
 @Path("/categories")
 @Produces({
         Formats.BASE_JSON,
         Formats.V1_JSON
 })
 public interface CategoryRestApi {
-    String ID_PARAM ="The numeric id of the categories";
+    String ID_PARAM = "The numeric id of the categories";
 
     //Method start
     @ApiOperation("Get all the categories")
@@ -41,16 +42,9 @@ public interface CategoryRestApi {
 
     //Method start
     @ApiOperation("GET all categories that have at least one subcategory with at least one subsubcategory with at least one quiz.")
+    @Path("categoryWithQuiz")
     @GET
-    @Path("withQuizzes")
-    List<CategoryDto> getCategoriesWithQuiz();
-
-
-    //Method start
-    @ApiOperation("GET all subsubcategories with at least one quiz.")
-    @GET
-    @Path("/withQuizzes/subsubcategories")
-    List<SubSubCategoryDto> getSubSubCategoriesWithQuiz();
+    List<CategoryDto> getCategoriesWithQuiz(@QueryParam("withQuizzes") boolean withQuizzes);
 
     //Method start
     @ApiOperation("Get a single category specified by id")
@@ -122,7 +116,7 @@ public interface CategoryRestApi {
     @Produces(Formats.BASE_JSON)
     @Deprecated
     Response deprecatedPatch(@ApiParam("The unique id of the counter") @PathParam("id") Long id,
-               @ApiParam("Change root category") String text);
+                             @ApiParam("Change root category") String text);
 
     //Method start
     @ApiOperation("Deprecated. Use \"id\" instead")
@@ -144,11 +138,19 @@ public interface CategoryRestApi {
 
     //Method start
     @ApiOperation("Deprecated. Use \"?withQuizzes\" instead.")
-    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @ApiResponse(code = 307, message = "Deprecated URI. Moved permanently.")
     @GET
     @Path("/withQuizzes")
     @Deprecated
     Response deprecatedGetCategoriesWithQuiz();
+
+    //Method start
+    @ApiOperation("GET all subsubcategories with at least one quiz.")
+    @ApiResponse(code = 307, message = "Deprecated URI. Moved permanently.")
+    @GET
+    @Path("/withQuizzes/subsubcategories")
+    @Deprecated
+    Response deprecatedGetSubSubCategoriesWithQuiz();
 
 
 }

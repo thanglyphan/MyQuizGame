@@ -97,8 +97,6 @@ public class QuizEJB implements Serializable{
 
 
 
-
-
     /*----------------------------------------------GETTER AND SETTER----------------------------------------------*/
 
     public List<Quiz> getQuizList(){

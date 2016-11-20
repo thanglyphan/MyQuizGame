@@ -42,7 +42,7 @@
     <entry_points version="2.0" />
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/restapi" />
+    <file type="web" url="file://$PROJECT_DIR$/QuizAPI" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

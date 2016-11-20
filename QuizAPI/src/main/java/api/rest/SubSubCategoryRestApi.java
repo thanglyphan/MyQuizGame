@@ -35,8 +35,8 @@ public interface SubSubCategoryRestApi {
 
     @ApiOperation("Get all the sub sub categories")
     @GET
-    @Path("withQuizzes")
-    List<SubSubCategoryDto> getWithQuizzes();
+    @Path("subsubWithQuiz")
+    List<SubSubCategoryDto> getWithQuizzes(@QueryParam("withQuizzes") boolean withQuizzes);
 
     @ApiOperation("Create a new sub sub category")
     @POST

@@ -27,7 +27,7 @@ import static junit.framework.TestCase.assertTrue;
  * Created by thang on 25.10.2016.
  */
 @RunWith(Arquillian.class)
-public class QuizTest {
+public class QuizTest123 {
     @Deployment
     public static JavaArchive createTestArchive() throws UnsupportedEncodingException {
         return ShrinkWrap.create(JavaArchive.class)

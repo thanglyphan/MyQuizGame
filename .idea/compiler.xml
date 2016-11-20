@@ -22,15 +22,19 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="GameAPI" />
         <module name="quiz" />
+        <module name="QuizAPI" />
         <module name="report" />
         <module name="restapi" />
         <module name="restApi" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="GameAPI" target="1.8" />
       <module name="MyQuizGame" target="1.5" />
       <module name="quiz" target="1.8" />
+      <module name="QuizAPI" target="1.8" />
       <module name="report" target="1.8" />
       <module name="restApi" target="1.8" />
       <module name="restapi" target="1.8" />

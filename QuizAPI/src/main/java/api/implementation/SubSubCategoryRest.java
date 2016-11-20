@@ -39,7 +39,12 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     @Override
     public List<SubSubCategoryDto> get() {return Converter.transformSubSub(categoryEJB.getCategoryListSubSub());}
     @Override
-    public List<SubSubCategoryDto> getWithQuizzes() {return Converter.transformSubSub(categoryEJB.getCategoryListSubSubWithQuizzes());}
+    public List<SubSubCategoryDto> getWithQuizzes(boolean withQuizzes) {
+        if(withQuizzes){
+            return Converter.transformSubSub(categoryEJB.getCategoryListSubSubWithQuizzes());
+        }
+        return new ArrayList<>();
+    }
 
     @Override
         public Long createSubSubCategory(@ApiParam("Categoryname") SubSubCategoryDto dto) {

@@ -2,8 +2,9 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/GameAPI" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/QuizAPI" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/quiz" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/report" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/restapi" charset="UTF-8" />
   </component>
 </project>
