@@ -21,8 +21,6 @@ import java.util.List;
         Formats.V1_JSON
 })
 public interface GameRestApi {
-    String ID_PARAM ="The numeric id of the categories";
-
     //Method start
     @ApiOperation("Get all the available games")
     @GET
@@ -32,6 +30,6 @@ public interface GameRestApi {
     @ApiOperation("Create a new game")
     @POST
     @ApiResponse(code = 200, message = "POST a new game")
-    Long createGame(@QueryParam("n") String x);
+    Long createGame(@DefaultValue("5") @QueryParam("n") String x);
 
 }
