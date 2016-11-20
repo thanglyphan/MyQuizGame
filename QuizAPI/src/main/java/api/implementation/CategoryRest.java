@@ -80,6 +80,7 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
+        /*
         Category category = categoryEJB.createCategory("First");
         CategorySub categorySub = categoryEJB.addSubToCategory(category, "Second");
         CategorySubSub categorySubSub = categoryEJB.addSubSubToCategorySub(category, categorySub, "Third");
@@ -87,7 +88,7 @@ public class CategoryRest implements CategoryRestApi {
         Quiz quiz = quizEJB.createQuiz(categorySubSub, "The Quiz");
         Question question = quizEJB.createQuestion(quiz, "How much does Thang bench?");
         quizEJB.createAnswerToQuestion(question, "120kg", "115kg", "110kg", "105kg");
-
+        */
 
         categoryEJB.deleteCategory(id);
     }

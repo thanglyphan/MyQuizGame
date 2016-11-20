@@ -27,6 +27,7 @@
         <fs>${file.separator}</fs>
         <swagger-version>1.5.10</swagger-version>
         <jackson-version>2.7.4</jackson-version>
+        <dropwizard.version>1.0.3</dropwizard.version>
     </properties>
 
 
@@ -57,6 +58,23 @@
                 <groupId>MyQuizGame</groupId>
                 <artifactId>QuizAPI</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <!-- DropWizard -->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-testing</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-assets</artifactId>
+                <version>${dropwizard.version}</version>
             </dependency>
 
             <dependency>
@@ -416,6 +434,20 @@
                     </executions>
                 </plugin>
 
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.4.3</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
 
             </plugins>
         </pluginManagement>
