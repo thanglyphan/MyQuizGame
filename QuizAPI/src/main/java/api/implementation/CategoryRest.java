@@ -16,7 +16,6 @@ import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
-import dto.SubSubCategoryDto;
 import io.swagger.annotations.ApiParam;
 
 
@@ -80,16 +79,6 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
-        /*
-        Category category = categoryEJB.createCategory("First");
-        CategorySub categorySub = categoryEJB.addSubToCategory(category, "Second");
-        CategorySubSub categorySubSub = categoryEJB.addSubSubToCategorySub(category, categorySub, "Third");
-
-        Quiz quiz = quizEJB.createQuiz(categorySubSub, "The Quiz");
-        Question question = quizEJB.createQuestion(quiz, "How much does Thang bench?");
-        quizEJB.createAnswerToQuestion(question, "120kg", "115kg", "110kg", "105kg");
-        */
-
         categoryEJB.deleteCategory(id);
     }
 
@@ -182,7 +171,6 @@ public class CategoryRest implements CategoryRestApi {
     //------------------------------------------------ DEPRECATED ------------------------------------------------//
     @Override
     public Response deprecatedGetById(@ApiParam(ID_PARAM) Long id) {
-        //return Response.status(301).location(UriBuilder.fromUri("categories/" + id).build()).build();
         return Responder.response("categories/", 301, id, "");
     }
 

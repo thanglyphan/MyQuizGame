@@ -20,6 +20,8 @@
     <class>datalayer.essentials.Answer</class>
     <class>datalayer.essentials.Solution</class>
     <class>datalayer.quiz.Quiz</class>
+    <class>dw.backend.datalayer.Game</class>
+    <class>dw.backend.datalayer.QuizObject</class>
 
     <properties>
       <property name="connection.driver_class" value="org.h2.Driver"/>

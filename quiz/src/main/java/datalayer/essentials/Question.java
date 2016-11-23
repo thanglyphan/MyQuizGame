@@ -1,6 +1,5 @@
 package datalayer.essentials;
 
-import datalayer.quiz.Quiz;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;

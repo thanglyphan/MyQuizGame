@@ -5,16 +5,13 @@ package api.implementation;
  */
 
 import api.rest.QuestionAnswersRestApi;
-import api.rest.QuizRestApi;
 import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
 import com.google.common.base.Throwables;
 import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
-import dto.Converter;
 import dto.QuestionDto;
-import dto.QuizDto;
 import io.swagger.annotations.ApiParam;
 
 import javax.ejb.EJB;
@@ -23,6 +20,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /*
@@ -42,23 +40,44 @@ public class QuestionAnswersRest implements QuestionAnswersRestApi {
     @Override
     public Long createQuestion(@ApiParam("Create a question") QuestionDto dto) {
         Long id;
-        try{
+        try {
             Quiz found = quizEJB.get(Long.parseLong(dto.quizId));
-            if(found == null){
+            if (found == null) {
                 throw new WebApplicationException("Invalid parameters: ", 500);
             }
             Question newQ = quizEJB.createQuestion(found, dto.question);
             id = newQ.getQuestionsId();
             quizEJB.createAnswerToQuestion(newQ, dto.choiceOne, dto.choiceTwo, dto.choiceThree, dto.choiceFour);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw wrapException(e);
         }
         return id;
     }
 
+    @Override
+    public Response getAnswer(Long id, String incomeQuestion) {
+        String question = incomeQuestion;
+        String answer = "";
+
+        Quiz found = quizEJB.get(id);
+        if (found == null) {
+            throw new WebApplicationException("Invalid parameters: ", 500);
+        }
+        for (Question a : found.getQuestionList()) {
+            if (a.getQuestion().toLowerCase().contains(question.toLowerCase())) {
+                answer = a.getAnswer().getSolutionToAnswer();
+            }
+        }
+        if (answer.equals("")) {
+            throw new WebApplicationException("Invalid question: ", 405);
+        }
+
+        return Response.ok(answer).build();
+    }
+
     //----------------------------------------------------------
 
-    protected WebApplicationException wrapException(Exception e) throws WebApplicationException{
+    protected WebApplicationException wrapException(Exception e) throws WebApplicationException {
 
         /*
             Errors:
@@ -67,8 +86,8 @@ public class QuestionAnswersRest implements QuestionAnswersRestApi {
          */
 
         Throwable cause = Throwables.getRootCause(e);
-        if(cause instanceof ConstraintViolationException){
-            return new WebApplicationException("Invalid constraints on input: "+cause.getMessage(), 400);
+        if (cause instanceof ConstraintViolationException) {
+            return new WebApplicationException("Invalid constraints on input: " + cause.getMessage(), 400);
         } else {
             return new WebApplicationException("Internal error", 500);
         }

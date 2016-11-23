@@ -4,16 +4,12 @@ package api.rest;
  * Created by thang on 31.10.2016.
  */
 
-import datalayer.categories.Category;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
-import dto.SubSubCategoryDto;
 import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 

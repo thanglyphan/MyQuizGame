@@ -3,25 +3,18 @@ package api.implementation;
 import api.rest.RandomQuizApi;
 import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
-import com.google.common.base.Throwables;
-import datalayer.categories.Category;
-import datalayer.categories.CategorySub;
-import datalayer.categories.CategorySubSub;
 import datalayer.quiz.Quiz;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.ext.InterceptorContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by thang on 17.11.2016.

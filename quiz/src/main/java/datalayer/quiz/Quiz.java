@@ -2,8 +2,6 @@ package datalayer.quiz;
 
 import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Question;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;

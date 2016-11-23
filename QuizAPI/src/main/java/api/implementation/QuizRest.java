@@ -8,12 +8,12 @@ import api.rest.QuizRestApi;
 import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
 import com.google.common.base.Throwables;
+import datalayer.categories.Category;
+import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
-import dto.CategoryDto;
-import dto.QuestionDto;
 import dto.QuizDto;
 import io.swagger.annotations.ApiParam;
 

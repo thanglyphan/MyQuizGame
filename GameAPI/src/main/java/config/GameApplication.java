@@ -52,7 +52,7 @@ public class GameApplication extends Application<GameConfiguration> {
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("0.1");
         beanConfig.setSchemes(new String[]{"http"});
-        beanConfig.setHost("localhost:8080");
+        beanConfig.setHost("localhost:9090");
         beanConfig.setBasePath("/mygames/api");
         beanConfig.setResourcePackage("dw.api");
         beanConfig.setScan(true);

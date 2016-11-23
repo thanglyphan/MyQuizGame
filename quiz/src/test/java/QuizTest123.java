@@ -1,6 +1,5 @@
 import businesslayer.CategoryEJB;
 import businesslayer.QuizEJB;
-import datalayer.essentials.Answer;
 import datalayer.quiz.Quiz;
 
 import datalayer.categories.Category;

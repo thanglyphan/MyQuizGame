@@ -1,14 +1,8 @@
 package dto;
 
-import businesslayer.QuizEJB;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import datalayer.essentials.Question;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.ejb.EJB;
 import java.util.List;
 import java.util.Map;
 

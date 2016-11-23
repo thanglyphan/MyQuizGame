@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/qa" , description = "The quiz api, get and post information")
@@ -27,4 +28,11 @@ public interface QuestionAnswersRestApi {
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiResponse(code = 200, message = "The id of newly created question")
     Long createQuestion(@ApiParam("Create a question") QuestionDto dto);
+
+    @ApiOperation("Get the answer to a question")
+    @GET
+    @Path("/{id}/{answerToQuestion}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    Response getAnswer(@PathParam("id") Long id, @PathParam("answerToQuestion") String question );
 }

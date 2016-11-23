@@ -1,7 +1,5 @@
 package businesslayer;
 
-import datalayer.categories.Category;
-import datalayer.categories.CategorySub;
 import datalayer.quiz.Quiz;
 import datalayer.categories.CategorySubSub;
 import datalayer.essentials.Answer;
