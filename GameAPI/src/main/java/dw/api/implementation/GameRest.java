@@ -1,5 +1,6 @@
 package dw.api.implementation;
 
+import com.google.common.base.Throwables;
 import dw.api.dto.GameConverter;
 import dw.api.dto.GameDto;
 import dw.api.rest.GameRestApi;
@@ -9,7 +10,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -85,14 +88,91 @@ public class GameRest extends GameRestBase implements GameRestApi {
     }
 
     @Override
-    public Response answerGameByID(@ApiParam("The numeric id of the games") Long id, String answer) throws IOException {
+    public Response answerGameByID(@ApiParam("The numeric id of the games") Long id, String qid, String answer) throws IOException {
+
         //Init
         String theAnswer = answer;
         String correct = "Yalla";
-        Set<String> solution = new HashSet<>();
         String questionForUser = "";
+        String pathForQuestion = "http://localhost:8080/myrest/api/qa/question/" + qid; //This question I want to answer.
+        boolean quitInstant = false;
+        Game game;
+        try {
+            game = gameEJB.get(id);
+        } catch (Exception e) {
+            throw wrapException(e);
+        }
+        HttpURLConnection connection = getConnection(pathForQuestion, "GET");
 
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            questionForUser = moddedToQuestionOnly(getJsonString(new BufferedReader(new InputStreamReader(connection.getInputStream()))));
+            String questionForUserModded = URLEncoder.encode(questionForUser, "UTF-8").replace("+", "%20");
+            //Create a list with ID for quiz only.
+            List<String> idOnly = new ArrayList<>();
+            for (String a : game.getQuizIdList()) {
+                idOnly.add(a.substring(a.lastIndexOf("/") + 1));
+            }
+
+            for (int i = 0; i < game.getQuizIdList().size(); i++) {
+                HttpURLConnection con = getConnection("http://localhost:8080/myrest/api/qa/" + idOnly.get(i) + "/" + questionForUserModded, "GET");
+                if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    String solution = getJsonString(new BufferedReader(new InputStreamReader(con.getInputStream()))).toLowerCase();
+
+                    if (solution.contains(theAnswer.toLowerCase())) {
+                        correct = "You answered question: " + questionForUser + " with answer: " + theAnswer + ". That is correct!";
+
+                        //User has answered correctly, remove the question/quiz from game, and if the hashmap isempty, remove the whole quiz.
+                        for (QuizObject quizObject : game.getQuizList()) {
+                            if (quizObject.getHashMapQuiz().containsKey(qid + "; " + questionForUser)) {
+                                quizObject.getHashMapQuiz().remove(qid + "; " + questionForUser);
+                            }
+                        }
+                        break;
+                    } else {
+                        quitInstant = true;
+                    }
+                }
+            }
+        } else {
+            correct = "Wrong input, try again";
+        }
+        System.out.println(game.getQuizList().size());
+
+        for (QuizObject a : game.getQuizList()) {
+            if(a != null){
+                if (a.getHashMapQuiz().isEmpty()) {
+                    game.getQuizList().remove(a);
+                }
+
+                if (game.getQuizList().isEmpty() || quitInstant) {
+                    Game temp = game;
+                    delete(game.getId());
+                    if (quitInstant) {
+                        correct = "Make new game, try again! You answered wrong.";
+                    } else {
+                        correct = "You completed the game! The last question was: "
+                                + questionForUser + ". You answered: " + theAnswer +
+                                ". That is correct! Gz, " + temp.getGameName() + " is now finished, this is the end :)";
+                    }
+                    return Response.ok(correct, MediaType.TEXT_PLAIN).build();
+                }
+            }
+
+        }
+
+        return Response.ok(correct, MediaType.TEXT_PLAIN).build();
+    }
+
+    private String moddedToQuestionOnly(String a) {
+        String s = a.replace("[", ",").replace("]", ",").replace("\"", "").replace("{", ",").replace("}", ",").replace(":", "").replace("questionsAndAnswersList", "");
+        s = s.substring(1, s.length() - 1);
+        String[] parts = s.split(",");
+        return parts[0];
+    }
+
+    private void holdMyShit() {
         //Get game by ID
+        /*
         Game game = gameEJB.get(id);
         List<String> listModded = new ArrayList<>();
         List<String> questionList = new ArrayList<>();
@@ -128,7 +208,6 @@ public class GameRest extends GameRestBase implements GameRestApi {
                 }
             }
         }
-
         /*
             Checking if answer is correct by first:
             1. Get quizzes in the game
@@ -136,6 +215,8 @@ public class GameRest extends GameRestBase implements GameRestApi {
             3. Hashmap stores a List<String> with answers, check if my answer is one of them.
             4. Check one more time if that answer is in the solution list.
          */
+
+        /*
         for(QuizObject a: game.getQuizList()){
             if(a.getHashMapQuiz().get(questionForUser) != null){
                 if(a.getHashMapQuiz().get(questionForUser).stream().map(String::toLowerCase)
@@ -148,14 +229,10 @@ public class GameRest extends GameRestBase implements GameRestApi {
                     break;
                 }else{
                     correct = "You answered question: " + questionForUser + " with answer: " + theAnswer + ". That is incorrect! The end.";
-                    /*
-                    java -Ddw.server.applicationConnectors[0].port=9090 -Ddw.server.adminConnectors[0].port=9091 -jar target/GameAPI-0.0.1-SNAPSHOT.jar server
-                     */
                 }
             }
         }
-
-        return Response.ok(correct, MediaType.TEXT_PLAIN).build();
+        */
     }
 
     @Override
@@ -163,5 +240,19 @@ public class GameRest extends GameRestBase implements GameRestApi {
         gameEJB.deleteGame(id);
     }
 
+    protected WebApplicationException wrapException(Exception e) throws WebApplicationException {
 
+        /*
+            Errors:
+            4xx: the user has done something wrong, eg asking for something that does not exist (404)
+            5xx: internal server error (eg, could be a bug in the code)
+         */
+
+        Throwable cause = Throwables.getRootCause(e);
+        if (cause instanceof ConstraintViolationException) {
+            return new WebApplicationException("Invalid constraints on input: " + cause.getMessage(), 400);
+        } else {
+            return new WebApplicationException("Internal error", 500);
+        }
+    }
 }

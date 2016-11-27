@@ -71,7 +71,7 @@ public class Converter {
             holderAnswer.add(a.getAnswer().getChoiceTwo());
             holderAnswer.add(a.getAnswer().getChoiceThree());
             holderAnswer.add(a.getAnswer().getChoiceFour());
-            listHashMap.put(a.getQuestion(), holderAnswer);
+            listHashMap.put(a.getQuestionsId() + "; " + a.getQuestion(), holderAnswer);
         }
         dto.questionsAndAnswersList = listHashMap;
         return dto;

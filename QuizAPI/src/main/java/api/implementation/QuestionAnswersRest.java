@@ -20,7 +20,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /*
@@ -73,6 +76,25 @@ public class QuestionAnswersRest implements QuestionAnswersRestApi {
         }
 
         return Response.ok(answer).build();
+    }
+
+    @Override
+    public Response getQuestion(Long id) {
+        HashMap<String, List<String>> listQuestionsMap = new HashMap<>();
+        List<String> answerList = new ArrayList<>();
+        Question found;
+        try{
+            found = quizEJB.getQuestion(id);
+        }catch (Exception e){
+            throw new WebApplicationException("Invalid question ID: "+ id, 404);
+        }
+        answerList.add(found.getAnswer().getChoiceOne());
+        answerList.add(found.getAnswer().getChoiceTwo());
+        answerList.add(found.getAnswer().getChoiceThree());
+        answerList.add(found.getAnswer().getChoiceFour());
+
+        listQuestionsMap.put(found.getQuestion(), answerList);
+        return Response.ok(listQuestionsMap).build();
     }
 
     //----------------------------------------------------------

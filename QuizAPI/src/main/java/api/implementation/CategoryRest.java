@@ -11,6 +11,7 @@ import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
+import datalayer.essentials.Answer;
 import datalayer.essentials.Question;
 import datalayer.quiz.Quiz;
 import dto.Converter;
@@ -182,6 +183,13 @@ public class CategoryRest implements CategoryRestApi {
 
     @Override
     public Response deprecatedPatch(@ApiParam("The unique id of the counter") Long id, @ApiParam("Change root category") String text) {
+        Category category = categoryEJB.createCategory("The category");
+        CategorySub categorySub = categoryEJB.addSubToCategory(category, "The subcategory");
+        CategorySubSub categorySubSub = categoryEJB.addSubSubToCategorySub(category, categorySub, "The subsubcategory");
+
+        Quiz quiz = quizEJB.createQuiz(categorySubSub, "The quiz");
+        Question question = quizEJB.createQuestion(quiz, "How much coffee does Thang drink?");
+        quizEJB.createAnswerToQuestion(question, "One cup per day", "Two cups per day", "Three cups per day", "None");
         return Responder.response("categories/", 301, id, "");
 
     }

@@ -39,6 +39,11 @@ public class GameEJB implements Serializable {
         hashGame.put(game.getId(), game);
         return game.getId();
     }
+    public QuizObject createQuizObject(){
+        QuizObject quizObject = new QuizObject();
+        persistInATransaction(quizObject);
+        return quizObject;
+    }
 
     public void addQuizToGame(Long id, QuizObject quizId){
         Game game = get(id);

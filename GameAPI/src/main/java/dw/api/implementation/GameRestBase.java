@@ -48,7 +48,8 @@ public class GameRestBase {
 
         Game game = gameEJB.get(id);
 
-        QuizObject quizObject = new QuizObject();
+        QuizObject quizObject = gameEJB.createQuizObject();
+        System.out.println("BASE " + quizObject.getId());
 
         List<String> realList = new ArrayList<>();
 

@@ -35,4 +35,10 @@ public interface QuestionAnswersRestApi {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     Response getAnswer(@PathParam("id") Long id, @PathParam("answerToQuestion") String question );
+
+    @ApiOperation("Get the answer to a question")
+    @GET
+    @Path("/question/{id}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    Response getQuestion(@PathParam("id") Long id);
 }

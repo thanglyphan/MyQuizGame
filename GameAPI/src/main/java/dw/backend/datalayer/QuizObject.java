@@ -1,6 +1,7 @@
 package dw.backend.datalayer;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -8,8 +9,9 @@ import java.util.List;
  * Created by thang on 21.11.2016.
  */
 @Entity
-public class QuizObject {
-    @Id @GeneratedValue
+public class QuizObject implements Serializable {
+    @Id
+    @GeneratedValue
     private Long id;
 
     private HashMap<String, List<String>> hashMapQuiz = new HashMap<>();

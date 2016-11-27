@@ -44,7 +44,10 @@ public interface GameRestApi {
     @ApiOperation("Answer a specific quiz in a specific game")
     @POST
     @Path("/{id}")
-    Response answerGameByID(@ApiParam(ID_PARAM) @PathParam("id") Long id, @QueryParam("Your answer") String answer) throws IOException;
+    Response answerGameByID(
+            @ApiParam(ID_PARAM) @PathParam("id") Long id,
+            @ApiParam("Put in the question ID, the question you want to answer") @QueryParam("qid") String qid,
+            @ApiParam("Your answer to the question you put in the Q-ID field") @QueryParam("answer") String answer) throws IOException;
 
     //Method start
     @ApiOperation("Delete a category with the given id")

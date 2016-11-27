@@ -30,6 +30,7 @@ public class Game implements Serializable {
 
     @NotBlank
     @ElementCollection(targetClass=QuizObject.class)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH, orphanRemoval = true)
     private List<QuizObject> quizList;
 /*
     @ElementCollection(targetClass = Quiz.class)

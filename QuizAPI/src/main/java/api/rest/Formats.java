@@ -5,5 +5,6 @@ package api.rest;
  */
 public interface Formats {
     String BASE_JSON = "application/json; charset=UTF-8";
-    String V1_JSON = "application/vnd.api.rest+json; charset=UTF-8; version=2";
+    String V1_JSON = "application/vnd.api.rest+json; charset=UTF-8; version=1";
+    String HAL_V1 = "application/hal+json; charset=UTF-8; version=1";
 }
