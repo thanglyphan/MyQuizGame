@@ -8,6 +8,7 @@ import datalayer.quiz.Quiz;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,7 +161,19 @@ public class CategoryEJB {
         return true;
     }
 
-
+    public List<Category> getWholePackage(boolean expand, int maxResult){
+        if(expand){
+            return em.createNamedQuery(Category.FIND_ALL).setMaxResults(maxResult).getResultList();
+        }else {
+            return em.createNamedQuery(Category.FIND_ALL).setMaxResults(maxResult).getResultList();
+        }
+    }
+    public List<CategorySub> getCategoryListSubWithMax (int maxResult){
+        return em.createNamedQuery(Category.FIND_ALL_SUB).setMaxResults(maxResult).getResultList();
+    }
+    public List<CategorySubSub> getCategoryListSubSubWithMax (int maxResult){
+        return em.createNamedQuery(Category.FIND_ALL_SUBSUB).setMaxResults(maxResult).getResultList();
+    }
     public List<Category> getCategoryList(){
         return em.createNamedQuery(Category.FIND_ALL).getResultList();
     }

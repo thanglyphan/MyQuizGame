@@ -10,9 +10,12 @@ import com.google.common.base.Throwables;
 import datalayer.categories.Category;
 import datalayer.categories.CategorySub;
 import datalayer.categories.CategorySubSub;
+import dto.CategoryDto;
 import dto.Converter;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
+import dto.collection.ListDto;
+import dto.hal.HalLink;
 import io.swagger.annotations.ApiParam;
 
 import javax.ejb.EJB;
@@ -20,8 +23,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 /*
@@ -31,13 +38,65 @@ import java.util.List;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) //avoid creating new transactions
 public class SubCategoryRest implements SubCategoryRestApi {
+
+    @Context
+    UriInfo uriInfo;
+
     @EJB
     protected CategoryEJB categoryEJB;
 
 
     @Override
-    public List<SubCategoryDto> get() {
-        return Converter.transformSub(categoryEJB.getCategoryListSub());
+    public ListDto<SubCategoryDto> get(
+            @ApiParam("Offset in the list of news") @DefaultValue("0") Integer offset,
+            @ApiParam("Limit of news in a single retrieved page") @DefaultValue("10") Integer limit)
+    {
+
+
+        if(offset < 0){
+            throw new WebApplicationException("Negative offset: "+offset, 400);
+        }
+
+        if(limit < 1){
+            throw new WebApplicationException("Limit should be at least 1: "+limit, 400);
+        }
+
+        List<CategorySub> subList;
+        int maxResults = 50;
+
+        subList = categoryEJB.getCategoryListSubWithMax(maxResults);
+
+
+
+        if(offset != 0 && offset >=  subList.size()){
+            throw new WebApplicationException("Offset "+ offset + " out of bound "+subList.size(), 400);
+        }
+
+        ListDto<SubCategoryDto> dto = Converter.transformCollectionSub(
+                subList, offset, limit);
+
+        UriBuilder builder = uriInfo.getBaseUriBuilder()
+                .path("/subcategories")
+                .queryParam("limit", limit);
+
+        dto._links.self = new HalLink(builder.clone()
+                .queryParam("offset", offset)
+                .build().toString()
+        );
+
+        if (!subList.isEmpty() && offset > 0) {
+            dto._links.previous = new HalLink(builder.clone()
+                    .queryParam("offset", Math.max(offset - limit, 0))
+                    .build().toString()
+            );
+        }
+        if (offset + limit < subList.size()) {
+            dto._links.next = new HalLink(builder.clone()
+                    .queryParam("offset", offset + limit)
+                    .build().toString()
+            );
+        }
+        return dto;
     }
 
     @Override

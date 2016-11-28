@@ -7,6 +7,7 @@ package api.rest;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
+import dto.collection.ListDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,7 +32,17 @@ public interface SubSubCategoryRestApi {
 
     @ApiOperation("Get all the sub sub categories")
     @GET
-    List<SubSubCategoryDto> get();
+    @Produces(Formats.HAL_V1)
+    ListDto<SubSubCategoryDto> get(
+            @ApiParam("Offset in the list of news")
+            @QueryParam("offset")
+            @DefaultValue("0")
+                    Integer offset,
+            @ApiParam("Limit of news in a single retrieved page")
+            @QueryParam("limit")
+            @DefaultValue("10")
+                    Integer limit
+    );
 
     @ApiOperation("Get all the sub sub categories")
     @GET

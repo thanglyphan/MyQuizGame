@@ -7,6 +7,7 @@ package api.rest;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
 import dto.SubSubCategoryDto;
+import dto.collection.ListDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,7 +32,17 @@ public interface SubCategoryRestApi {
 
     @ApiOperation("Get all the sub categories")
     @GET
-    List<SubCategoryDto> get();
+    @Produces(Formats.HAL_V1)
+    ListDto<SubCategoryDto> get(
+            @ApiParam("Offset in the list of news")
+            @QueryParam("offset")
+            @DefaultValue("0")
+                    Integer offset,
+            @ApiParam("Limit of news in a single retrieved page")
+            @QueryParam("limit")
+            @DefaultValue("10")
+                    Integer limit
+    );
 
     @ApiOperation("Create a new sub category")
     @POST
@@ -63,7 +74,7 @@ public interface SubCategoryRestApi {
             @ApiParam("The sub category that will replace the old one. Cannot change its id though.")
                     SubCategoryDto dto);
 
-    @ApiOperation("Modify the rootcategory")
+    @ApiOperation("Modify the sub category")
     @Path("/{id}")
     @PATCH
     @Consumes({Formats.V1_JSON, Formats.BASE_JSON})
@@ -75,12 +86,6 @@ public interface SubCategoryRestApi {
                @ApiParam("Change sub category")
                        String text);
 
-    /*
-        @ApiOperation("GET all subcategories with the given parent specified by id")
-        @GET
-        @Path("/categories/{id}/subcategories")
-        List<SubCategoryDto> getSubcategoriesByParentId(@ApiParam(ID_PARAM) @PathParam("id") Long id);
-    */
     @ApiOperation("GET all subsubcategories of the subcategory specified by id")
     @GET
     @Path("/{id}/subsubcategories")

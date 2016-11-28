@@ -6,6 +6,7 @@ package api.rest;
 
 import dto.CategoryDto;
 import dto.SubCategoryDto;
+import dto.collection.ListDto;
 import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 
@@ -25,7 +26,22 @@ public interface CategoryRestApi {
     //Method start
     @ApiOperation("Get all the categories")
     @GET
-    List<CategoryDto> get();
+    @Produces(Formats.HAL_V1)
+    ListDto<CategoryDto> get(
+
+            @ApiParam("Offset in the list of news")
+            @QueryParam("offset")
+            @DefaultValue("0")
+                    Integer offset,
+            @ApiParam("Limit of news in a single retrieved page")
+            @QueryParam("limit")
+            @DefaultValue("10")
+                    Integer limit,
+            @ApiParam("Expand the response with info on sub and subsub such as ID and title")
+            @QueryParam("expand")
+            @DefaultValue("false")
+                    boolean expand
+    );
 
     //Method start
     @ApiOperation("Create a new category")
@@ -40,13 +56,20 @@ public interface CategoryRestApi {
     @ApiOperation("GET all categories that have at least one subcategory with at least one subsubcategory with at least one quiz.")
     @Path("categoryWithQuiz")
     @GET
-    List<CategoryDto> getCategoriesWithQuiz(@QueryParam("withQuizzes") boolean withQuizzes);
+    List<CategoryDto> getCategoriesWithQuiz(
+            @ApiParam("Want to show quizzes?") @QueryParam("withQuizzes") boolean withQuizzes);
 
     //Method start
     @ApiOperation("Get a single category specified by id")
     @GET
     @Path("/{id}")
-    CategoryDto getById(@ApiParam(ID_PARAM) @PathParam("id") Long id);
+    CategoryDto getById(
+            @ApiParam(ID_PARAM) @PathParam("id") Long id,
+            @ApiParam("Expand the response with info on sub and subsub such as ID and title")
+            @QueryParam("expand")
+            @DefaultValue("false")
+            boolean expand
+    );
 
 
     //Method start

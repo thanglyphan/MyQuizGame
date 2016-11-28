@@ -96,7 +96,7 @@ public class QuizEJB implements Serializable{
 
 
     /*----------------------------------------------GETTER AND SETTER----------------------------------------------*/
-
+    public List<Quiz> getQuizListWithMaxLimit(int limit){return em.createNamedQuery(Quiz.FIND_ALL).setMaxResults(limit).getResultList();}
     public List<Quiz> getQuizList(){
         return em.createNamedQuery(Quiz.FIND_ALL).getResultList();
     }

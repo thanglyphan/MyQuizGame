@@ -14,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by thang on 14.11.2016.
  */
-public class SubCategoryTestIT extends CategoryRestTestBase {
+public class SubCategoryTestITeer extends CategoryRestTestBase {
 
     @Test
     public void testCleanDB() {

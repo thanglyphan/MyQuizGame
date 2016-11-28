@@ -7,6 +7,7 @@ package api.rest;
 import dto.CategoryDto;
 import dto.QuizDto;
 import dto.SubSubCategoryDto;
+import dto.collection.ListDto;
 import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 
@@ -27,7 +28,17 @@ public interface QuizRestApi {
 
     @ApiOperation("Get all the available quizzes")
     @GET
-    List<QuizDto> get();
+    @Produces(Formats.HAL_V1)
+    ListDto<QuizDto> get(
+            @ApiParam("Offset in the list of news")
+            @QueryParam("offset")
+            @DefaultValue("0")
+                    Integer offset,
+            @ApiParam("Limit of news in a single retrieved page")
+            @QueryParam("limit")
+            @DefaultValue("10")
+                    Integer limit
+    );
 
     @ApiOperation("Create a new quiz")
     @POST
@@ -57,7 +68,7 @@ public interface QuizRestApi {
             @PathParam("id")
                     Long id,
             //
-            @ApiParam("The sub sub category that will replace the old one. Cannot change its id though.")
+            @ApiParam("Update the quiz with json")
                     QuizDto dto);
 
     @ApiOperation("Modify the quiz")

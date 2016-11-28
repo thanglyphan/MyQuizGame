@@ -17,6 +17,8 @@ import datalayer.quiz.Quiz;
 import dto.Converter;
 import dto.CategoryDto;
 import dto.SubCategoryDto;
+import dto.collection.ListDto;
+import dto.hal.HalLink;
 import io.swagger.annotations.ApiParam;
 
 
@@ -25,9 +27,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +41,8 @@ import java.util.List;
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) //avoid creating new transactions
 public class CategoryRest implements CategoryRestApi {
     private Category category;
+    @Context
+    UriInfo uriInfo;
 
     @EJB
     protected CategoryEJB categoryEJB;
@@ -44,9 +51,58 @@ public class CategoryRest implements CategoryRestApi {
     protected QuizEJB quizEJB;
 
     @Override
-    public List<CategoryDto> get() {
-        return Converter.transform(categoryEJB.getCategoryList());
+    public ListDto<CategoryDto> get(
+            @ApiParam("Offset in the list of news") @DefaultValue("0") Integer offset,
+            @ApiParam("Limit of news in a single retrieved page") @DefaultValue("10") Integer limit,
+            @ApiParam("Whether to retrieve or not votes and comments for the given news") @DefaultValue("false") boolean expand) {
+
+        if(offset < 0){
+            throw new WebApplicationException("Negative offset: "+offset, 400);
+        }
+
+        if(limit < 1){
+            throw new WebApplicationException("Limit should be at least 1: "+limit, 400);
+        }
+
+        List<Category> categoryList;
+        int maxResults = 50;
+
+        categoryList = categoryEJB.getWholePackage(expand, maxResults);
+
+
+
+        if(offset != 0 && offset >=  categoryList.size()){
+            throw new WebApplicationException("Offset "+ offset + " out of bound "+categoryList.size(), 400);
+        }
+
+        ListDto<CategoryDto> dto = Converter.transformCollection(
+                categoryList, offset, limit, expand);
+
+        UriBuilder builder = uriInfo.getBaseUriBuilder()
+                .path("/categories")
+                .queryParam("limit", limit)
+                .queryParam("expand", expand);
+
+        dto._links.self = new HalLink(builder.clone()
+                .queryParam("offset", offset)
+                .build().toString()
+        );
+
+        if (!categoryList.isEmpty() && offset > 0) {
+            dto._links.previous = new HalLink(builder.clone()
+                    .queryParam("offset", Math.max(offset - limit, 0))
+                    .build().toString()
+            );
+        }
+        if (offset + limit < categoryList.size()) {
+            dto._links.next = new HalLink(builder.clone()
+                    .queryParam("offset", offset + limit)
+                    .build().toString()
+            );
+        }
+        return dto;
     }
+
 
     @Override
     public Long createCategory(@ApiParam("Categoryname") CategoryDto dto) {
@@ -66,16 +122,23 @@ public class CategoryRest implements CategoryRestApi {
         List<Category> list = new ArrayList<>();
         if(withQuizzes){
             for (Quiz a : quizEJB.getQuizList()) {
-                list.add(a.getCategorySubSub());
+                list.add(a.getCategorySubSub().getCategory());
             }
-            return Converter.transform(list);
+            return Converter.transform(list, false);
         }
-        return Converter.transform(list);
+        return Converter.transform(list, false);
     }
 
     @Override
-    public CategoryDto getById(@ApiParam(ID_PARAM) Long id) {
-        return Converter.transform(categoryEJB.get(id));
+    public CategoryDto getById(
+            @ApiParam(ID_PARAM) Long id,
+            @ApiParam("Whether to retrieve or not votes and comments for the given news") @DefaultValue("false") boolean expand) {
+        Category category = categoryEJB.get(id);
+        if(category.isRoot()){
+            return Converter.transform(categoryEJB.get(id), expand);
+        }else{
+            throw new WebApplicationException("Not found, not root category: " + id, 404);
+        }
     }
 
     @Override
@@ -121,7 +184,7 @@ public class CategoryRest implements CategoryRestApi {
             throw new WebApplicationException("Invalid instructions. Should contain just a number: \"" + text + "\"");
         }
         categoryEJB.updatePatch(id, rootCategory);
-        Converter.transform(category);
+        Converter.transform(category, false);
     }
 
     /*

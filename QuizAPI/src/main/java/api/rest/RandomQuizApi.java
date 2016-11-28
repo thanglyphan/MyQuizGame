@@ -30,12 +30,15 @@ public interface RandomQuizApi {
     @ApiResponse(code = 307, message = "Temp redirect to /quizzes{id}")
     @Path("randomQuiz")
     @GET
-    Response getRandomQuiz(@QueryParam("filter") String filter);
+    Response getRandomQuiz(
+            @ApiParam("Type in ID for either root/sub/subsub and get random quiz based on the ID") @QueryParam("filter") String filter);
 
     @ApiOperation("Random quiz")
     @ApiResponse(code = 200, message = "Temp redirect to /quizzes{id}")
     @POST
     @Path("randomQuizzes")
     @Produces({Formats.BASE_JSON, Formats.V1_JSON})
-    List<String> getRandomQuizzes(@DefaultValue("5") @QueryParam("n") String y, @QueryParam("filter") String x);
+    List<String> getRandomQuizzes(
+            @ApiParam("How many quizzes you want?") @DefaultValue("5") @QueryParam("n") String y,
+            @ApiParam("From where? Filter is the filtering ID's, you get quizzes based on filter ID") @QueryParam("filter") String x);
 }
