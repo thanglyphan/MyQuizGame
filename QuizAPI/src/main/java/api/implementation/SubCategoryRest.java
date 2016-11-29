@@ -124,19 +124,6 @@ public class SubCategoryRest implements SubCategoryRestApi {
             categoryEJB.deleteCategory(id);
     }
 
-    /*
-    @Override
-    public List<SubCategoryDto> getSubcategoriesByParentId(@ApiParam(ID_PARAM) Long id) {
-        List<CategorySub> categorySubs;
-        try{
-            Category found = categoryEJB.get(id);
-            categorySubs = found.getCategorySubs();
-        }catch (Exception e){
-            throw wrapException(e);
-        }
-        return Converter.transformSub(categorySubs);
-    }
-    */
     @Override
     public List<SubSubCategoryDto> getSubSubcategoriesById(@ApiParam(ID_PARAM) Long id) {
         List<CategorySubSub> categorySubSubs;

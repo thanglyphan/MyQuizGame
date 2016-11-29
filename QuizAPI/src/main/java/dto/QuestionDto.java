@@ -12,7 +12,7 @@ import java.util.Map;
 
 @ApiModel("A question")
 public class QuestionDto {
-    @ApiModelProperty(value = "The id of the category", hidden = true)
+    @ApiModelProperty("The id of the category")
     public String id;
     @ApiModelProperty("The id of the question")
     public String quizId;
@@ -27,6 +27,18 @@ public class QuestionDto {
     @ApiModelProperty(value = "Choice four", notes = "POST/PUT only")
     public String choiceFour;
 
+//        QuizDto dto = new QuizDto(null, quizId, question, strings[0], strings[1], strings[2], strings[3]);
 
-    public QuestionDto(){}
+    public QuestionDto(){
+
+    }
+    public QuestionDto(String id, String quizId, String question, String choiceOne, String choiceTwo, String choiceThree, String choiceFour){
+        this.id = id;
+        this.quizId = quizId;
+        this.question = question;
+        this.choiceOne = choiceOne;
+        this.choiceTwo = choiceTwo;
+        this.choiceThree = choiceThree;
+        this.choiceFour = choiceFour;
+    }
 }

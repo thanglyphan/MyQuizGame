@@ -4,9 +4,8 @@ package Base; /**
 
 import api.rest.Formats;
 import com.google.gson.Gson;
-import dto.CategoryDto;
-import dto.SubCategoryDto;
-import dto.SubSubCategoryDto;
+import dto.*;
+import dto.collection.ListDto;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.After;
@@ -16,12 +15,13 @@ import web.JBossUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
 
-public class CategoryRestTestBase {
+public class RestTestBase {
     @BeforeClass
     public static void initClass() {
         JBossUtil.waitForJBoss(10);
@@ -37,15 +37,28 @@ public class CategoryRestTestBase {
     @Before
     @After
     public void clean() {
-        List<CategoryDto> list = Arrays.asList(given().accept(ContentType.JSON).get()
-                .then()
-                .statusCode(200)
-                .extract().as(CategoryDto[].class));
+        int total = Integer.MAX_VALUE;
 
-        list.stream().forEach(dto ->
-                given().pathParam("id", dto.id).delete("/{id}").then().statusCode(204));
+        while (total > 0) {
+            ListDto<?> listDto = given()
+                    .queryParam("limit", Integer.MAX_VALUE)
+                    .get()
+                    .then()
+                    .statusCode(200)
+                    .extract()
+                    .as(ListDto.class);
 
-        get().then().statusCode(200).body("size()", is(0));
+            listDto.list.stream()
+                    .map(n -> ((Map) n).get("id"))
+                    .forEach(id ->
+                            given().delete("/" + id)
+                                    .then()
+                                    .statusCode(204)
+                    );
+
+            total = listDto.totalSize - listDto.list.size();
+        }
+
     }
 
     protected String createCategory(String rootCategory){
@@ -73,7 +86,6 @@ public class CategoryRestTestBase {
                 .then()
                 .statusCode(200)
                 .extract().asString();
-        RestAssured.basePath = "/myrest/api/categories/";
 
         return rootId;
     }
@@ -90,10 +102,43 @@ public class CategoryRestTestBase {
                 .then()
                 .statusCode(200)
                 .extract().asString();
-        RestAssured.basePath = "/myrest/api/categories/";
 
         return rootId;
     }
+
+    protected String createQuiz(String subSubCategoryId, String quizName){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 8080;
+        RestAssured.basePath = "/myrest/api/quizzes/";
+        QuizDto dto = new QuizDto(null, subSubCategoryId, quizName);
+
+        String rootId = given().contentType(Formats.V1_JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(200)
+                .extract().asString();
+
+        return rootId;
+    }
+
+    protected String createQuestion(String quizId, String question, String... strings){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 8080;
+        RestAssured.basePath = "/myrest/api/qa/";
+        QuestionDto dto = new QuestionDto(null, quizId, question, strings[0], strings[1], strings[2], strings[3]);
+
+        String rootId = given().contentType(Formats.V1_JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(200)
+                .extract().asString();
+
+        return rootId;
+    }
+
+
 
 
     protected void changePath(String path){

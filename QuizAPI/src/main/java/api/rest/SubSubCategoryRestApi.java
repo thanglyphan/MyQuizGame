@@ -70,7 +70,7 @@ public interface SubSubCategoryRestApi {
     @ApiOperation("Update an existing sub sub category")
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(Formats.V1_JSON)
     void update(
             @ApiParam(ID_PARAM)
             @PathParam("id")

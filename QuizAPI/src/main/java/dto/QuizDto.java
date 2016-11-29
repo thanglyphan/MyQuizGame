@@ -51,4 +51,10 @@ public class QuizDto {
 
     public QuizDto(){}
 
+    public QuizDto(String id, String subSubCategoryId, String quizName) { //, String subcategory, String subSubcategory, String question, String... answers) {
+        this.id = id;
+        this.subSubCategoryId = subSubCategoryId;
+        this.quizName = quizName;
+    }
+
 }

@@ -1,4 +1,4 @@
-import Base.CategoryRestTestBase;
+import Base.RestTestBase;
 import api.rest.Formats;
 import dto.CategoryDto;
 import org.junit.Test;
@@ -7,17 +7,18 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.is;
+
 /**
  * Created by thang on 30.10.2016.
  */
-public class CategoryTestITeer extends CategoryRestTestBase {
+public class CategoryTestIT extends RestTestBase {
 
     @Test
     public void testCleanDB() {
 
         get().then()
                 .statusCode(200)
-                .body("size()", is(0));
+                .body("list.size()", is(0));
     }
 
     @Test
@@ -25,7 +26,7 @@ public class CategoryTestITeer extends CategoryRestTestBase {
         String rootCategory = "Thangs life";
         String rootId = createCategory(rootCategory);
 
-        get().then().statusCode(200).body("size()", is(1));
+        get().then().statusCode(200).body("list.size()", is(1)).body("totalSize", is(1));
 
         given().pathParam("id", rootId)
                 .get("/{id}")
@@ -34,11 +35,44 @@ public class CategoryTestITeer extends CategoryRestTestBase {
                 .body("id", is(rootId))
                 .body("rootCategory", is(rootCategory));
     }
+
+    @Test
+    public void testCategoriesWithQuizzes() {
+        String rootCategory = "Thangs life";
+        String subCategory = "Sub";
+        String subSubCategory = "SubSub";
+        String quizName = "What is up?";
+        String rootId = createCategory(rootCategory);
+        String rootIdWithoutQuiz = createCategory("Without");
+        String subId = createSubCategory(rootId, subCategory);
+        String subSubId = createSubSubCategory(rootId, subId, subSubCategory);
+        String quizId = createQuiz(subSubId, quizName);
+
+        changePath("categories");
+
+        //Confirm added stuff.
+        get().then().statusCode(200).body("list.size()", is(2)).body("totalSize", is(2));
+
+        //Check with quiz. I have only added one category with quiz, the other dont have. Check if size is 1.
+        given().queryParam("withQuizzes", true)
+                .get("/categoryWithQuiz")
+                .then()
+                .statusCode(200)
+                .body("size()", is(1));
+
+        //Without returns nothing, check if size is 0
+        given().queryParam("withQuizzes", false)
+                .get("/categoryWithQuiz")
+                .then()
+                .statusCode(200)
+                .body("size()", is(0));
+
+    }
+
     @Test
     public void testDelete() {
         String id = createCategory("Hello");
-        get().then().body("id", contains(id));
-        delete("/id/" + id).then().statusCode(301); //instead of 204
+        delete("/" + id).then().statusCode(204); //instead of 204
     }
 
     @Test
@@ -81,7 +115,7 @@ public class CategoryTestITeer extends CategoryRestTestBase {
     }
 
     @Test
-    public void testPatch(){
+    public void testPatch() {
         String text = "someText";
         String id = createCategory(text);
 
@@ -96,7 +130,7 @@ public class CategoryTestITeer extends CategoryRestTestBase {
     }
 
     @Test
-    public void testGetSubcategories(){
+    public void testGetSubcategories() {
         String rootCategory = "Hello, Thang";
         String rootId = createCategory(rootCategory);
 
@@ -110,6 +144,8 @@ public class CategoryTestITeer extends CategoryRestTestBase {
         String subCategory = "Hello, its me";
         createSubCategory(rootId, subCategory);
 
+        changePath("categories");
+
         //Check if body is 1 and rootCategory is here
         given().pathParam("id", rootId)
                 .get("/{id}/subcategories")
@@ -117,6 +153,7 @@ public class CategoryTestITeer extends CategoryRestTestBase {
                 .statusCode(200)
                 .body("size()", is(1));
     }
+
     @Test
     public void testInvalidGetById() {
         get("/categories/3000").then().statusCode(404);

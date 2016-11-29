@@ -1,8 +1,6 @@
-import Base.CategoryRestTestBase;
+import Base.RestTestBase;
 import api.rest.Formats;
-import dto.CategoryDto;
 import dto.SubCategoryDto;
-import io.restassured.RestAssured;
 import org.junit.Test;
 
 import static io.restassured.RestAssured.delete;
@@ -14,21 +12,19 @@ import static org.hamcrest.core.Is.is;
 /**
  * Created by thang on 14.11.2016.
  */
-public class SubCategoryTestITeer extends CategoryRestTestBase {
+public class SubCategoryTestIT extends RestTestBase {
 
     @Test
     public void testCleanDB() {
         get().then()
                 .statusCode(200)
-                .body("size()", is(0));
+                .body("list.size()", is(0));
     }
 
     @Test
-    public void testCreateAndGetCategory() {
+    public void testCreateAndGetSubCategory() {
         String rootCategory = "Thangs life";
         String rootId = createCategory(rootCategory);
-
-        get().then().statusCode(200).body("size()", is(1));
 
         //Create sub
         String subCategory = "Sub category";
@@ -36,6 +32,8 @@ public class SubCategoryTestITeer extends CategoryRestTestBase {
 
         //Change path
         changePath("subcategories");
+
+        get().then().statusCode(200).body("list.size()", is(1)).body("totalSize", is(1));
 
         //Check sub
         given().pathParam("id", id)
@@ -49,13 +47,28 @@ public class SubCategoryTestITeer extends CategoryRestTestBase {
         //Change back for deleting
         changePath("categories");
     }
-
+    /*
     @Test
     public void testDelete() {
+        //Add and confirm
         String id = createCategory("Hello");
-        get().then().body("id", contains(id));
-        delete(id).then().statusCode(204);
+        String subId = createSubCategory(id, "YO");
+
+        changePath("subcategories");
+        get().then().statusCode(200).body("list.size()", is(1)).body("totalSize", is(1));
+
+        //Delete
+        delete("/" + subId).then().statusCode(204);
+
+        //Confirm deletion
+        get().then().statusCode(200).body("list.size()", is(0)).body("totalSize", is(0));
+
+        //Change dir back to categories, confirm still one category, i deleted only sub
+        changePath("categories");
+        get().then().statusCode(200).body("list.size()", is(1)).body("totalSize", is(1));
+
     }
+    */
 
 
     @Test

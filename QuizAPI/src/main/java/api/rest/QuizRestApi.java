@@ -62,7 +62,7 @@ public interface QuizRestApi {
     @ApiOperation("Update an existing quiz")
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(Formats.V1_JSON)
     void update(
             @ApiParam(ID_PARAM)
             @PathParam("id")
