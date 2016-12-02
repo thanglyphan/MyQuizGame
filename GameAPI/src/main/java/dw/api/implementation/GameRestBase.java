@@ -1,18 +1,25 @@
 package dw.api.implementation;
 
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import rx.Observable;
+
 import datalayer.quiz.Quiz;
 import dw.backend.businesslayer.GameEJB;
 import dw.backend.datalayer.Game;
 import dw.backend.datalayer.QuizObject;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by thang on 23.11.2016.
@@ -22,11 +29,18 @@ public class GameRestBase {
 
     protected final GameEJB gameEJB = new GameEJB();
 
-    protected HttpURLConnection getConnection(String requestUrl, String requestMethod) throws IOException {
+    protected HttpURLConnection getConnection(String requestUrl, String requestMethod) throws Exception {
+
         URL obj = new URL(requestUrl);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod(requestMethod);
-        return con;
+
+        //Hystrix here.
+        if(new CallQuiz(con).execute() == 200){
+            return con;
+        }else{
+            return null;
+        }
     }
 
     protected void addQuizIds(Long id, String path, BufferedReader in) throws IOException {
@@ -93,5 +107,29 @@ public class GameRestBase {
 
     protected String removeChar(String a) {
         return a.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "");
+    }
+
+
+    private class CallQuiz extends HystrixCommand<Integer> {
+
+        private final HttpURLConnection con;
+
+        protected CallQuiz(HttpURLConnection con) {
+            super(HystrixCommandGroupKey.Factory.asKey("Interactions with Quiz"));
+            this.con = con;
+        }
+
+        @Override
+        protected Integer run() throws Exception {
+                //Note: this synchronous call could fail (and so throw an exception),
+                //or even just taking a long while (if server is under heavy load)
+            return con.getResponseCode();
+        }
+
+        @Override
+        protected Integer getFallback() {
+            //this is what is returned in case of exceptions or timeouts
+            return 404;
+        }
     }
 }

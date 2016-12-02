@@ -32,7 +32,10 @@ public interface GameRestApi {
     @ApiOperation("Create a new game")
     @POST
     @ApiResponse(code = 200, message = "POST a new game")
-    Long createGame(@DefaultValue("5") @QueryParam("How many quizzes do you want to add?") String x, @QueryParam("Game name") String gameName,  @QueryParam("ID from either root, sub or subsub category") String secondParam) throws IOException;
+    Long createGame(
+            @ApiParam("How many quizzes do you want to add?") @DefaultValue("5") @QueryParam("n") String x,
+            @ApiParam("Game name") @QueryParam("name") String gameName,
+            @ApiParam("ID from either root, sub or subsub category") @QueryParam("filter") String secondParam) throws Exception;
 
     //Method start
     @ApiOperation("Get a specific game")
@@ -47,7 +50,7 @@ public interface GameRestApi {
     Response answerGameByID(
             @ApiParam(ID_PARAM) @PathParam("id") Long id,
             @ApiParam("Put in the question ID, the question you want to answer") @QueryParam("qid") String qid,
-            @ApiParam("Your answer to the question you put in the Q-ID field") @QueryParam("answer") String answer) throws IOException;
+            @ApiParam("Your answer to the question you put in the Q-ID field") @QueryParam("answer") String answer) throws Exception;
 
     //Method start
     @ApiOperation("Delete a category with the given id")

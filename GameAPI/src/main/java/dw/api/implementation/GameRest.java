@@ -50,7 +50,7 @@ public class GameRest extends GameRestBase implements GameRestApi {
     private HttpServletResponse response;
 
     @Override
-    public Long createGame(String x, String gameName, String secondParam) throws IOException {
+    public Long createGame(String x, String gameName, String secondParam) throws Exception {
         int quizCount = Integer.parseInt(x);
         Long id;
         Game game;
@@ -59,7 +59,7 @@ public class GameRest extends GameRestBase implements GameRestApi {
         String REQUEST_URL = "http://localhost:8080/myrest/api/randomquiz/randomQuizzes?n=" + x + "&filter=" + secondParam;
         HttpURLConnection con = getConnection(REQUEST_URL, "POST");
 
-        if (con.getResponseCode() == HttpURLConnection.HTTP_OK) { // success
+        if (con.getResponseCode() == HttpURLConnection.HTTP_OK ) { // success
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             //Create the game first.
             id = gameEJB.createGame(gameName);
@@ -88,7 +88,7 @@ public class GameRest extends GameRestBase implements GameRestApi {
     }
 
     @Override
-    public Response answerGameByID(@ApiParam("The numeric id of the games") Long id, String qid, String answer) throws IOException {
+    public Response answerGameByID(@ApiParam("The numeric id of the games") Long id, String qid, String answer) throws Exception {
 
         //Init
         String theAnswer = answer;

@@ -201,7 +201,7 @@ public class CategoryEJB {
     public CategorySubSub getSubSub(@NotNull Long id){
         return em.find(CategorySubSub.class, id);
     }
-    public void deleteCategory(@NotNull Long categoryId){
+    public void deleteCategory(@NotNull Long categoryId) {
         em.remove(em.find(Category.class, categoryId));
     }
     public boolean isPresent(Long id){return em.contains(em.find(Category.class, id));}

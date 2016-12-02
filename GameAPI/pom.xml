@@ -20,11 +20,6 @@
             <groupId>MyQuizGame</groupId>
             <artifactId>quiz</artifactId>
         </dependency>
-
-        <!--
-            Make sure that the "provided" dependencies of "news"
-            module are marked as "compile" here
-          -->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -45,8 +40,10 @@
             <artifactId>h2</artifactId>
             <scope>compile</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -81,15 +78,6 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-hibernate-validations</artifactId>
         </dependency>
-
-        <!--
-            Note: usually in a DropWizard application, we would
-            not need to define these dependencies, as already
-            provided by DropWizard indirectly.
-            However, as in the root pom file we define them as
-            scope "provided" (to use them in Widlfly), here we
-            need to redefine them as "compile"
-        -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -114,6 +102,10 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
         </dependency>
 
     </dependencies>
@@ -165,8 +157,6 @@
                     </transformers>
                 </configuration>
             </plugin>
-
-
         </plugins>
     </build>
 

@@ -47,7 +47,7 @@ public class SubCategoryTestIT extends RestTestBase {
         //Change back for deleting
         changePath("categories");
     }
-    /*
+/*
     @Test
     public void testDelete() {
         //Add and confirm
@@ -68,8 +68,8 @@ public class SubCategoryTestIT extends RestTestBase {
         get().then().statusCode(200).body("list.size()", is(1)).body("totalSize", is(1));
 
     }
-    */
 
+*/
 
     @Test
     public void testUpdate() throws Exception {

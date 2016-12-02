@@ -121,7 +121,7 @@ public class SubCategoryRest implements SubCategoryRestApi {
 
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {
-            categoryEJB.deleteCategory(id);
+        categoryEJB.deleteCategory(id);
     }
 
     @Override
