@@ -28,7 +28,7 @@ public class GameApplication extends Application<GameConfiguration> {
 
     @Override
     public String getName() {
-        return "Counter written in DropWizard";
+        return "GameAPI written in DropWizard";
     }
 
     @Override

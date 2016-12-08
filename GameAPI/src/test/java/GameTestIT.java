@@ -32,10 +32,7 @@ public class GameTestIT {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         /*
-            WireMock will run as a process binding on port 8099 (in this case).
-            We configure the application by, during testing, redirecting all
-            calls to external services to WireMock instead.
-            In WireMock, we need to define mocked answers.
+            java -Ddw.server.applicationConnectors[0].port=9090 -Ddw.server.adminConnectors[0].port=9091 -jar target/GameAPI-0.0.1-SNAPSHOT.jar server
          */
         wiremockServer = new WireMockServer(
                 wireMockConfig().port(8099).notifier(new ConsoleNotifier(true))
