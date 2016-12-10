@@ -22,13 +22,23 @@ import static io.restassured.RestAssured.given;
  * Created by thang on 02.12.2016.
  */
 public class GameTestIT {
+
+    @ClassRule
+    public static final DropwizardAppRule<GameConfiguration> RULE =
+            new DropwizardAppRule<>(GameApplication.class);
+
+
     private static WireMockServer wiremockServer;
 
     @BeforeClass
     public static void initClass() {
+
+        System.setProperty("foo", "localhost:8099");
+
         RestAssured.baseURI = "http://localhost";
         RestAssured.port = 8080;
-        RestAssured.basePath = "/index.html/games/";
+        RestAssured.basePath = "/mygames/api";
+//        RestAssured.basePath = "/index.html/games/";
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 
         /*
@@ -44,16 +54,16 @@ public class GameTestIT {
     public static void tearDown() {
         wiremockServer.stop();
     }
-    /*
+
     @Test
     public void tester() throws Exception {
 
         given().queryParam("n", "5")
-                .get()
+                .get("/games")
                 .then()
                 .statusCode(200);
     }
-    */
+
 
 
 }

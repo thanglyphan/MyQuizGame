@@ -67,7 +67,7 @@ public class GameApplication extends Application<GameConfiguration> {
         //Hystrix configuration
         AbstractConfiguration conf = ConfigurationManager.getConfigInstance();
         // how long to wait before giving up a request?
-        conf.setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 500); //default is 1000
+        conf.setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 20000); //default is 1000
         // how many failures before activating the CB?
         conf.setProperty("hystrix.command.default.circuitBreaker.requestVolumeThreshold", 2); //default 20
         conf.setProperty("hystrix.command.default.circuitBreaker.errorThresholdPercentage", 50);

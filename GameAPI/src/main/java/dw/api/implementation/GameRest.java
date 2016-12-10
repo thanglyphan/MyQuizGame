@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
  */
 public class GameRest extends GameRestBase implements GameRestApi {
 
+    private String quizAddress = System.getProperty("foo", "localhost:8080");
+
     @Override
     public List<GameDto> get(String x) {
         int count = Integer.parseInt(x);
@@ -56,7 +58,7 @@ public class GameRest extends GameRestBase implements GameRestApi {
         Game game;
 
         //Now, find quizzes from the QuizApi with http call, LIMIT quizCount. Then add to "game"
-        String REQUEST_URL = "http://localhost:8080/myrest/api/randomquiz/randomQuizzes?n=" + x + "&filter=" + secondParam;
+        String REQUEST_URL = "http://"+quizAddress+"/myrest/api/randomquiz/randomQuizzes?n=" + x + "&filter=" + secondParam;
         HttpURLConnection con = getConnection(REQUEST_URL, "POST");
 
         if (con.getResponseCode() == HttpURLConnection.HTTP_OK ) { // success
