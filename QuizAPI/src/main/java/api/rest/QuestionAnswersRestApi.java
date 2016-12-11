@@ -19,7 +19,7 @@ import java.util.List;
 @Api(value = "/qa" , description = "The quiz api, get and post information")
 // when the url is "<base>/news", then this class will be used to handle it
 @Path("/qa")
-@Produces(Formats.V1_JSON) // states that, when a method returns something, it is in Json
+@Produces(MediaType.APPLICATION_JSON) // states that, when a method returns something, it is in Json
 public interface QuestionAnswersRestApi {
     String ID_PARAM ="The numeric id of the categories";
 
@@ -38,8 +38,10 @@ public interface QuestionAnswersRestApi {
             @ApiParam("Quiz ID here") @PathParam("id") Long id,
             @ApiParam("Type in your question(needs to exist in the quiz)")@PathParam("answerToQuestion") String question );
 
-    @ApiOperation("Get the answer to a question")
+    @ApiOperation("Get question by id")
     @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/question/{id}")
-    Response getQuestion(@PathParam("id") Long id);
+    Response getQuestion(@ApiParam("Question ID here") @PathParam("id") Long id);
 }

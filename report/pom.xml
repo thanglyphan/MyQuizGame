@@ -27,7 +27,13 @@
 
         <dependency>
             <groupId>MyQuizGame</groupId>
-            <artifactId>restapi</artifactId>
+            <artifactId>GameAPI</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>MyQuizGame</groupId>
+            <artifactId>QuizAPI</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <type>war</type>
         </dependency>

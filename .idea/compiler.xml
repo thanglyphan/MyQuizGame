@@ -28,6 +28,7 @@
         <module name="report" />
         <module name="restapi" />
         <module name="restApi" />
+        <module name="SoapAPI" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -39,6 +40,7 @@
       <module name="restApi" target="1.8" />
       <module name="restapi" target="1.8" />
       <module name="sdf" target="1.8" />
+      <module name="SoapAPI" target="1.8" />
       <module name="utils" target="1.8" />
     </bytecodeTargetLevel>
   </component>

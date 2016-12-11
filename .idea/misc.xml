@@ -43,6 +43,7 @@
   </component>
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/QuizAPI" />
+    <file type="web" url="file://$PROJECT_DIR$/SoapAPI" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

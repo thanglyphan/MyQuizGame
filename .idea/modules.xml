@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/GameAPI/GameAPI.iml" filepath="$PROJECT_DIR$/GameAPI/GameAPI.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyQuizGame.iml" filepath="$PROJECT_DIR$/MyQuizGame.iml" />
       <module fileurl="file://$PROJECT_DIR$/QuizAPI/QuizAPI.iml" filepath="$PROJECT_DIR$/QuizAPI/QuizAPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SoapAPI/SoapAPI.iml" filepath="$PROJECT_DIR$/SoapAPI/SoapAPI.iml" />
       <module fileurl="file://$PROJECT_DIR$/quiz/quiz.iml" filepath="$PROJECT_DIR$/quiz/quiz.iml" />
       <module fileurl="file://$PROJECT_DIR$/report/report.iml" filepath="$PROJECT_DIR$/report/report.iml" />
     </modules>

@@ -141,7 +141,7 @@ public class QuizTestIT extends RestTestBase {
 
 
     @Test
-    public void testPatch(){
+    public void testPatch() {
         String text = "someText";
         String id = createCategory(text);
 
@@ -168,17 +168,17 @@ public class QuizTestIT extends RestTestBase {
     }
 
     @Test
-    public void testAddQuestionAndAnswerToQuiz(){
+    public void testAddQuestionAndAnswerToQuiz() {
         String id = createCategory("Hello");
         String subId = createSubCategory(id, "Its me");
         String subSubId = createSubSubCategory(id, subId, "YO");
         String quizId = createQuiz(subSubId, "Quiz");
-        String question = "Hello, all good?";
+        String question = "Hello all good?";
         String qId = createQuestion(quizId, question, "Not much", "Very much", "Little bit", "Dont know");
         changePath("qa");
 
         //Lets check if the question is there
-        given().contentType(Formats.V1_JSON)
+        given().contentType(MediaType.APPLICATION_JSON)
                 .pathParam("id", qId)
                 .get("/question/{id}")
                 .then()

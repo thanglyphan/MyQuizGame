@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  */
 public class GameRest extends GameRestBase implements GameRestApi {
 
-    private String quizAddress = System.getProperty("foo", "localhost:8080");
-
+    private String quizAddress = System.getProperty("quizWebAddress", "localhost:8099");
+    //private String quizAddress = "localhost:8080";
     @Override
     public List<GameDto> get(String x) {
         int count = Integer.parseInt(x);
@@ -53,12 +53,12 @@ public class GameRest extends GameRestBase implements GameRestApi {
 
     @Override
     public Long createGame(String x, String gameName, String secondParam) throws Exception {
-        int quizCount = Integer.parseInt(x);
         Long id;
         Game game;
 
         //Now, find quizzes from the QuizApi with http call, LIMIT quizCount. Then add to "game"
-        String REQUEST_URL = "http://"+quizAddress+"/myrest/api/randomquiz/randomQuizzes?n=" + x + "&filter=" + secondParam;
+        String REQUEST_URL = "http://"+quizAddress+"/myrest/api/randomquiz/randomQuizzes?n=" + x + "&filter=" + secondParam; //TESTS
+        //String REQUEST_URL = "http://localhost:8080/myrest/api/randomquiz/randomQuizzes?n=" + x + "&filter=" + secondParam; //DEBUGGING LIVE
         HttpURLConnection con = getConnection(REQUEST_URL, "POST");
 
         if (con.getResponseCode() == HttpURLConnection.HTTP_OK ) { // success
@@ -68,7 +68,8 @@ public class GameRest extends GameRestBase implements GameRestApi {
 
             //Set response header and add quiz ID's to arraylist. Just to have it.
             response.setHeader("Location", "games/" + id);
-            String redirectPath = "http://localhost:8080/myrest/api/quizzes/";
+            String redirectPath = "http://"+quizAddress+"/myrest/api/quizzes/"; //TESTS
+            //String redirectPath = "http://localhost:8080/myrest/api/quizzes/"; //DEBUGGING LIVE
             addQuizIds(id, redirectPath, in); //Just an extra, not important here.
 
             //Make a new http request.
@@ -96,7 +97,8 @@ public class GameRest extends GameRestBase implements GameRestApi {
         String theAnswer = answer;
         String correct = "Yalla";
         String questionForUser = "";
-        String pathForQuestion = "http://localhost:8080/myrest/api/qa/question/" + qid; //This question I want to answer.
+        String pathForQuestion = "http://"+quizAddress+"/myrest/api/qa/question/" + qid; //TESTS
+        //String pathForQuestion = "http://localhost:8080/myrest/api/qa/question/" + qid; //This question I want to answer.
         boolean quitInstant = false;
         Game game;
         try {
@@ -105,7 +107,7 @@ public class GameRest extends GameRestBase implements GameRestApi {
             throw wrapException(e);
         }
         HttpURLConnection connection = getConnection(pathForQuestion, "GET");
-
+        System.out.println(connection.getResponseCode());
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             questionForUser = moddedToQuestionOnly(getJsonString(new BufferedReader(new InputStreamReader(connection.getInputStream()))));
             String questionForUserModded = URLEncoder.encode(questionForUser, "UTF-8").replace("+", "%20");
@@ -116,7 +118,9 @@ public class GameRest extends GameRestBase implements GameRestApi {
             }
 
             for (int i = 0; i < game.getQuizIdList().size(); i++) {
-                HttpURLConnection con = getConnection("http://localhost:8080/myrest/api/qa/" + idOnly.get(i) + "/" + questionForUserModded, "GET");
+                String path = "http://"+quizAddress+"/myrest/api/qa/" + idOnly.get(i) + "/" + questionForUserModded;
+                //String path = "http://localhost:8080/myrest/api/qa/" + idOnly.get(i) + "/" + questionForUserModded;
+                HttpURLConnection con = getConnection(path, "GET");
                 if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     String solution = getJsonString(new BufferedReader(new InputStreamReader(con.getInputStream()))).toLowerCase();
 
@@ -138,8 +142,6 @@ public class GameRest extends GameRestBase implements GameRestApi {
         } else {
             correct = "Wrong input, try again";
         }
-        System.out.println(game.getQuizList().size());
-
         for (QuizObject a : game.getQuizList()) {
             if(a != null){
                 if (a.getHashMapQuiz().isEmpty()) {
@@ -172,70 +174,6 @@ public class GameRest extends GameRestBase implements GameRestApi {
         return parts[0];
     }
 
-    private void holdMyShit() {
-        //Get game by ID
-        /*
-        Game game = gameEJB.get(id);
-        List<String> listModded = new ArrayList<>();
-        List<String> questionList = new ArrayList<>();
-        //Create a list with "filter params" to use for request.
-        for (QuizObject a : game.getQuizList()) {
-            for (String question : a.getHashMapQuiz().keySet()) {
-                String moddedText = URLEncoder.encode(question, "UTF-8").replace("+", "%20");
-                listModded.add(moddedText);
-                questionList.add(question);
-            }
-        }
-
-        //Get ONE specific question for user, after shuffle the questions.
-        Collections.shuffle(questionList);
-        questionForUser = questionList.get(0);
-
-        //Create a list with ID for quiz only.
-        List<String> idOnly = new ArrayList<>();
-        for(String a: game.getQuizIdList()){
-            idOnly.add(a.substring(a.lastIndexOf("/") + 1));
-        }
-
-        //Sort ID's
-        java.util.Collections.sort(idOnly);
-
-        //Getting the answers to the quiz by id and question-"filter". The URI is: GET /qa/{id}/{answerToQuestion}
-        for(int i = 0; i < idOnly.size(); i++){
-            for(String a: listModded){
-                HttpURLConnection connection = getConnection("http://localhost:8080/myrest/api/qa/" + idOnly.get(i) + "/" + a, "GET");
-                if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
-                    String s = getJsonString(new BufferedReader(new InputStreamReader(connection.getInputStream())));
-                    solution.add(s.toLowerCase());
-                }
-            }
-        }
-        /*
-            Checking if answer is correct by first:
-            1. Get quizzes in the game
-            2. Get the question in each quiz(key in hashmap)
-            3. Hashmap stores a List<String> with answers, check if my answer is one of them.
-            4. Check one more time if that answer is in the solution list.
-         */
-
-        /*
-        for(QuizObject a: game.getQuizList()){
-            if(a.getHashMapQuiz().get(questionForUser) != null){
-                if(a.getHashMapQuiz().get(questionForUser).stream().map(String::toLowerCase)
-                        .collect(Collectors.toList())
-                        .stream()
-                        .anyMatch(n -> n.contains(theAnswer.toLowerCase()))
-                        && solution.contains(theAnswer.toLowerCase())){
-                    correct = "You answered question: " + questionForUser + " with answer: " + theAnswer + ". That is correct!";
-                    a.getHashMapQuiz().remove(questionForUser);
-                    break;
-                }else{
-                    correct = "You answered question: " + questionForUser + " with answer: " + theAnswer + ". That is incorrect! The end.";
-                }
-            }
-        }
-        */
-    }
 
     @Override
     public void delete(@ApiParam(ID_PARAM) Long id) {

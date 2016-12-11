@@ -34,13 +34,15 @@ public class GameRestBase {
         URL obj = new URL(requestUrl);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod(requestMethod);
-
+        /*
         //Hystrix here.
         if(new CallQuiz(con).execute() == 200){
             return con;
         }else{
             return null;
         }
+        */
+        return con;
     }
 
     protected void addQuizIds(Long id, String path, BufferedReader in) throws IOException {
@@ -63,7 +65,6 @@ public class GameRestBase {
         Game game = gameEJB.get(id);
 
         QuizObject quizObject = gameEJB.createQuizObject();
-        System.out.println("BASE " + quizObject.getId());
 
         List<String> realList = new ArrayList<>();
 
